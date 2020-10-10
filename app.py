@@ -61,8 +61,60 @@ class Employee(db.Model):
         self.created_at = created_at
         self.updated_at = updated_at
 
-# Route /login api Page
-@app.route('/login', methods=('GET','POST'))
+# Route /signup api
+@app.route('/signup', methods=["POST"])
+def signup_jwt():
+
+    #errors = {"first_name" : "first name exists"}
+    errors = None
+    #success = {"created" : "Employee add successfully."}
+    success = None
+
+    first_name = request.args.get("first_name")
+    last_name = request.args.get("last_name")
+    email = request.args.get("email")
+    password = bcrypt.generate_password_hash(request.args.get("password"))
+    gender = request.args.get("gender")
+    phone = request.args.get("phone")
+    city = request.args.get("city")
+    address = request.args.get("address")
+    picture = request.args.get("picture")
+    manager_id = request.args.get("manager_id")
+
+    if first_name is None:
+        errors = {
+            "first_name" : "first name is empty.",
+            "last_name" : "last name is empty",
+            "email" : "email is empty",
+            "password" : "password is empty",
+            "gender" : "gender is empty",
+            "phone" : "phone is empty",
+            "address" : "city is empty",
+            "address" : "address is empty",
+            "picture" : "picture is empty",
+            "manager" : "manager is empty"
+        }
+
+    employee = Employee(manager_id,first_name,last_name,email,password,"gender",phone,"city",address,picture,0,'remember_token',0,'created_at','updated_at')
+    db.session.add(employee)
+    db.session.commit()
+
+    if not first_name or not last_name:
+        return make_response('Could not verify',401,{'WWW-Authenticate':'Basic releam="Login required"'})
+
+    if first_name is not None:
+        token = jwt.encode({'username':"ibrahim",'exp':datetime.datetime.utcnow()+datetime.timedelta(minutes=30)},app.secret_key)
+        ret = {
+            'access_token': token.decode('UTF-8'),
+            'user':  'ok',
+            'success':  success,
+            'errors':  errors
+        }
+        return jsonify(ret), 200
+    return make_response('Could not verify',401,{'WWW-Authenticate':'Basic releam="Login required"'})
+
+# Route /signin api
+@app.route('/signin', methods=('GET','POST'))
 def login_jwt():
     u = Employee(1,'parwiz','parwiz','parwiz','parwiz','parwiz','parwiz','parwiz','parwiz','parwiz',0,'parwiz',0,'parwiz','parwiz')
     db.session.add(u)
