@@ -1,4 +1,4 @@
-# Factory.
+# Factory management & pont of sales .
 
 Factory manufactures products and has a number of outlets to sell them.
 
@@ -6,11 +6,11 @@ This project includes displaying and selling products from factories through var
 
 And it gives you various payment methods such as the traditional method or master card...
 
-<h1>database schema</h1>
+<h1>Database schema.</h1>
 
 ![stack Overflow](https://raw.githubusercontent.com/ibrahimBougaoua/theFactoryBackEnd/main/conception/database.png?token=AJ62QTVM2QIMPACSB3YRTQ27RMJXE)
 
-<h1>database schema implemented</h1>
+<h1>Database schema implemented.</h1>
 
 
 <pre> 
