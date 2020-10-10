@@ -83,32 +83,25 @@ def signup_jwt():
 
     if first_name is None:
         errors = {
-            "first_name" : "first name is empty.",
-            "last_name" : "last name is empty",
-            "email" : "email is empty",
-            "password" : "password is empty",
-            "gender" : "gender is empty",
-            "phone" : "phone is empty",
-            "address" : "city is empty",
-            "address" : "address is empty",
-            "picture" : "picture is empty",
-            "manager" : "manager is empty"
+            "fields" : "Some fields are empty."
         }
+
+    if errors is None:
+        success = "Employee add successfully."
 
     employee = Employee(manager_id,first_name,last_name,email,password,"gender",phone,"city",address,picture,0,'remember_token',0,'created_at','updated_at')
     db.session.add(employee)
     db.session.commit()
 
-    if not first_name or not last_name:
-        return make_response('Could not verify',401,{'WWW-Authenticate':'Basic releam="Login required"'})
+    #if not first_name or not last_name:
+    #    return make_response('Could not verify',401,{'WWW-Authenticate':'Basic releam="Login required"'})
 
-    if first_name is not None:
+    if errors is None:
         token = jwt.encode({'username':"ibrahim",'exp':datetime.datetime.utcnow()+datetime.timedelta(minutes=30)},app.secret_key)
         ret = {
             'access_token': token.decode('UTF-8'),
-            'user':  'ok',
-            'success':  success,
-            'errors':  errors
+            'user':  'user data',
+            'success':  success
         }
         return jsonify(ret), 200
     return make_response('Could not verify',401,{'WWW-Authenticate':'Basic releam="Login required"'})
