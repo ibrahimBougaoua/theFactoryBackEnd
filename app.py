@@ -109,16 +109,6 @@ def signup_jwt():
 # Route /signin api
 @app.route('/signin', methods=('GET','POST'))
 def login_jwt():
-    u = Employee(1,'parwiz','parwiz','parwiz','parwiz','parwiz','parwiz','parwiz','parwiz','parwiz',0,'parwiz',0,'parwiz','parwiz')
-    db.session.add(u)
-    db.session.commit()
-    username = "ibrahim"
-    password = "bougaoua"
-    user = {
-        "id":1,
-        "a":"b",
-        "a":"b"
-    }
 
     if not username or not password:
         return make_response('Could not verify',401,{'WWW-Authenticate':'Basic releam="Login required"'})
