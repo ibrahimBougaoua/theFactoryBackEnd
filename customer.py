@@ -26,6 +26,7 @@ app.config['JWT_CSRF_CHECK_FORM'] = True
 
 bcrypt = Bcrypt()
 
+# Customer Model
 class Customer(db.Model):
     customer_id = db.Column(db.Integer, primary_key = True)
     first_name = db.Column(db.String(50))
@@ -76,6 +77,84 @@ class Customer(db.Model):
         self.trash = trash
         self.created_at = created_at
         self.updated_at = updated_at
+
+# Customer Sales Model
+class CustomerSales(db.Model):
+    customer_id = db.Column(db.Integer)
+    payment_id = db.Column(db.Integer)
+    point_sale_id = db.Column(db.Integer)
+    product_id = db.Column(db.Integer)
+    quantity = db.Column(db.Integer)
+    paid = db.Column(db.Boolean)
+    payment_date = db.Column(db.Boolean)
+    created_at = db.Column(db.TIMESTAMP)
+
+    def __init__(self, customer_id, payment_id, point_sale_id, product_id, quantity, paid, payment_date ,created_at):
+        self.customer_id = customer_id
+        self.payment_id = payment_id
+        self.point_sale_id = point_sale_id
+        self.product_id = product_id
+        self.quantity = quantity
+        self.paid = paid
+        self.payment_date = payment_date
+        self.created_at = created_at
+
+
+# Route /signup api
+@app.route('/sales', methods=["POST"])
+def customerSales():
+
+    #errors = {"first_name" : "first name exists"}
+    errors = None
+    #success = {"created" : "Employee add successfully."}
+    success = None
+
+    first_name = request.args.get("first_name")
+    last_name = request.args.get("last_name")
+    email = request.args.get("email")
+    password = bcrypt.generate_password_hash(request.args.get("password"))
+    gender = request.args.get("gender")
+    phone = request.args.get("phone")
+    city = request.args.get("city")
+    address = request.args.get("address")
+    picture = request.args.get("picture")
+
+    if first_name is None:
+        errors = {
+            "fields" : "Some fields are empty."
+        }
+
+    
+    if errors is None:
+        customer = Customer(first_name,last_name,email,password,"gender", 25,phone,"city",address,picture,"credit_card" ,"credit_card_type" ,"billin_address" ,"billing_city" ,"billing_region" ,"billing_postal_code" , "remember_token", "active_token",1, 1, 0,'created_at','updated_at')
+        db.session.add(customer)
+        db.session.commit()
+
+        data = Customer.query.filter_by(email=email).first()
+        
+        user = { "id" : data.customer_id,
+                     "first_name" : data.first_name,
+                     "last_name" : data.last_name,
+                     "email" : data.email,
+                     "gender" : data.gender,
+                     "phone" : data.phone,
+                     "city" : data.city,
+                     "address" : data.address,
+                     "picture" : data.picture,
+                     "online" : data.online,
+                     "black_list" : data.black_list,
+                     "trash" : data.trash,
+                     "created_at" : data.created_at,
+                     "updated_at" : data.updated_at
+                    }
+        token = jwt.encode({'user':user,'exp':datetime.datetime.utcnow()+datetime.timedelta(minutes=1)},app.secret_key)
+        ret = {
+            'access_token': token.decode('UTF-8'),
+            'user':  user,
+            'success':  'Employee add successfully.'
+        }
+        return jsonify(ret), 200
+    return jsonify({'errors' : errors})
 
 # Route /signup api
 @app.route('/signup', methods=["POST"])
