@@ -61,8 +61,6 @@ class Employee(db.Model):
         self.created_at = created_at
         self.updated_at = updated_at
 
-
-
 # Route /signup api
 @app.route('/signup', methods=["POST"])
 def signup_jwt():
@@ -81,26 +79,40 @@ def signup_jwt():
     city = request.args.get("city")
     address = request.args.get("address")
     picture = request.args.get("picture")
-    manager_id = request.args.get("manager_id")
+    manage_id = request.args.get("manage_id")
 
     if first_name is None:
         errors = {
             "fields" : "Some fields are empty."
         }
 
-    if errors is None:
-        success = "Employee add successfully."
-
-    employee = Employee(manager_id,first_name,last_name,email,password,"gender",phone,"city",address,picture,0,'remember_token',0,'created_at','updated_at')
-    db.session.add(employee)
-    db.session.commit()
-
+    data = None
+    
+    # check if email allready exists.
     data = Employee.query.filter_by(email=email).first()
+    if data is not None:
+        if data.email == email:
+            return jsonify({'email' : 'email allready exists.'})
+    
+    # check if phone allready exists.
+    data = Employee.query.filter_by(phone=phone).first()
+    if data is not None:
+        if data.phone == phone:
+            return jsonify({'phone' : 'phone allready exists.'})
 
-    #if not first_name or not last_name:
-    #    return make_response('Could not verify',401,{'WWW-Authenticate':'Basic releam="Login required"'})
+    # check if the manager is exist.
+    data = Employee.query.filter_by(employee_id=manage_id).first()
+    if data is None:
+            return jsonify({'manager' : 'not exist.'})
 
     if errors is None:
+
+        employee = Employee(manage_id,first_name,last_name,email,password,"gender",phone,"city",address,picture,0,'remember_token',0,'created_at','updated_at')
+        db.session.add(employee)
+        db.session.commit()
+
+        data = Employee.query.filter_by(email=email).first()
+        
         user = { "id" : data.employee_id,
                      "first_name" : data.first_name,
                      "last_name" : data.last_name,
@@ -119,10 +131,10 @@ def signup_jwt():
         ret = {
             'access_token': token.decode('UTF-8'),
             'user':  user,
-            'success':  success
+            'success':  'Employee add successfully.'
         }
         return jsonify(ret), 200
-    return make_response('Could not verify',401,{'WWW-Authenticate':'Basic releam="Login required"'})
+    return jsonify({'errors' : errors})
 
 # Route /signin api
 @app.route('/signin', methods=('GET','POST'))
@@ -211,6 +223,12 @@ def all(user):
                     }
         data.append(elemenet)
     return jsonify({ 'data' : data })
+
+# delete employee by id & protected by access token
+@app.route('/employee/<id>', methods=['POST'])
+def delete(id):
+    Employee.query.filter_by(employee_id=6).delete()
+    return jsonify({ 'message' : 'delete employee successfully !' })
 
 if __name__ == '__main__':
     app.run(port=5000,debug=True)
