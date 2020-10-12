@@ -61,6 +61,28 @@ class Employee(db.Model):
         self.created_at = created_at
         self.updated_at = updated_at
 
+
+@app.route('/all', methods=('GET','POST'))
+def all():
+    data = []
+    for x in Employee.query.all():
+        elemenet = { "id" : x.employee_id,
+                     "first_name" : x.first_name,
+                     "last_name" : x.last_name,
+                     "email" : x.email,
+                     "gender" : x.gender,
+                     "phone" : x.phone,
+                     "city" : x.city,
+                     "address" : x.address,
+                     "picture" : x.picture,
+                     "enable" : x.enable,
+                     "trash" : x.trash,
+                     "created_at" : x.created_at,
+                     "updated_at" : x.updated_at
+                    }
+        data.append(elemenet)
+    return jsonify({'all_employee': data})
+
 # Route /signup api
 @app.route('/signup', methods=["POST"])
 def signup_jwt():
