@@ -62,26 +62,6 @@ class Employee(db.Model):
         self.updated_at = updated_at
 
 
-@app.route('/all', methods=('GET','POST'))
-def all():
-    data = []
-    for x in Employee.query.all():
-        elemenet = { "id" : x.employee_id,
-                     "first_name" : x.first_name,
-                     "last_name" : x.last_name,
-                     "email" : x.email,
-                     "gender" : x.gender,
-                     "phone" : x.phone,
-                     "city" : x.city,
-                     "address" : x.address,
-                     "picture" : x.picture,
-                     "enable" : x.enable,
-                     "trash" : x.trash,
-                     "created_at" : x.created_at,
-                     "updated_at" : x.updated_at
-                    }
-        data.append(elemenet)
-    return jsonify({'all_employee': data})
 
 # Route /signup api
 @app.route('/signup', methods=["POST"])
@@ -132,17 +112,33 @@ def signup_jwt():
 @app.route('/signin', methods=('GET','POST'))
 def login_jwt():
 
-    if not username or not password:
-        return make_response('Could not verify',401,{'WWW-Authenticate':'Basic releam="Login required"'})
+    email = request.args.get("email")
+    password = request.args.get("password")
 
-    if username is not None:
+    data = Employee.query.filter_by(email=email,password=password).first()
+
+    if data is not None :
+
         token = jwt.encode({'username':"ibrahim",'exp':datetime.datetime.utcnow()+datetime.timedelta(minutes=30)},app.secret_key)
         ret = {
             'token': token.decode('UTF-8'),
-            'user':  user
+            'user':  { "id" : data.employee_id,
+                     "first_name" : data.first_name,
+                     "last_name" : data.last_name,
+                     "email" : data.email,
+                     "gender" : data.gender,
+                     "phone" : data.phone,
+                     "city" : data.city,
+                     "address" : data.address,
+                     "picture" : data.picture,
+                     "enable" : data.enable,
+                     "trash" : data.trash,
+                     "created_at" : data.created_at,
+                     "updated_at" : data.updated_at
+                    }
         }
         return jsonify(ret), 200
-    return make_response('Could not verify',401,{'WWW-Authenticate':'Basic releam="Login required"'})
+    return jsonify({'message' : 'Unauthorize.'})
 
 # token_required
 def token_required(f):
@@ -175,5 +171,26 @@ def protected(user):
     print(user)
     return jsonify({'message':user})
 
+@app.route('/all_employee', methods=('GET','POST'))
+@token_required
+def all():
+    data = []
+    for x in Employee.query.all():
+        elemenet = { "id" : x.employee_id,
+                     "first_name" : x.first_name,
+                     "last_name" : x.last_name,
+                     "email" : x.email,
+                     "gender" : x.gender,
+                     "phone" : x.phone,
+                     "city" : x.city,
+                     "address" : x.address,
+                     "picture" : x.picture,
+                     "enable" : x.enable,
+                     "trash" : x.trash,
+                     "created_at" : x.created_at,
+                     "updated_at" : x.updated_at
+                    }
+        data.append(elemenet)
+    return jsonify({ 'data' : data })
 if __name__ == '__main__':
     app.run(port=5000,debug=True)
