@@ -53,7 +53,7 @@ class Customer(db.Model):
     created_at = db.Column(db.TIMESTAMP)
     updated_at = db.Column(db.TIMESTAMP)
 
-    def __init__(self, first_name, last_name, email, password, gender, age, phone, city, address, picture, enable, remember_token, active_token, credit_card ,credit_card_type ,billin_address ,billing_city ,billing_region ,billing_postal_code ,billing_city, black_list, trash, created_at, updated_at):
+    def __init__(self, first_name, last_name, email, password, gender, age, phone, city, address, picture, credit_card ,credit_card_type ,billin_address ,billing_city ,billing_region ,billing_postal_code ,billing_city, remember_token, active_token,online, black_list, trash, created_at, updated_at):
         self.manage_id = manage_id
         self.first_name = first_name
         self.last_name = last_name
@@ -126,7 +126,7 @@ def signup_jwt():
 
     if errors is None:
 
-        employee = Employee(manage_id,first_name,last_name,email,password,"gender",phone,"city",address,picture,0,'remember_token',0,'created_at','updated_at')
+        employee = Employee(manage_id,first_name,last_name,email,password,"gender",phone,"city",address,picture,  ,'remember_token',0,'created_at','updated_at')
         db.session.add(employee)
         db.session.commit()
 
