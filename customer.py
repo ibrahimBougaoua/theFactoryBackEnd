@@ -80,13 +80,13 @@ class Customer(db.Model):
 
 # Customer Sales Model
 class CustomerSales(db.Model):
-    customer_id = db.Column(db.Integer)
+    customer_id = db.Column(db.Integer, primary_key = True)
     payment_id = db.Column(db.Integer)
     point_sale_id = db.Column(db.Integer)
     product_id = db.Column(db.Integer)
     quantity = db.Column(db.Integer)
     paid = db.Column(db.Boolean)
-    payment_date = db.Column(db.Boolean)
+    payment_date = db.Column(db.String)
     created_at = db.Column(db.TIMESTAMP)
 
     def __init__(self, customer_id, payment_id, point_sale_id, product_id, quantity, paid, payment_date ,created_at):
@@ -99,8 +99,7 @@ class CustomerSales(db.Model):
         self.payment_date = payment_date
         self.created_at = created_at
 
-
-# Route /signup api
+# Route /sales api
 @app.route('/sales', methods=["POST"])
 def customerSales():
 
@@ -109,52 +108,45 @@ def customerSales():
     #success = {"created" : "Employee add successfully."}
     success = None
 
-    first_name = request.args.get("first_name")
-    last_name = request.args.get("last_name")
-    email = request.args.get("email")
-    password = bcrypt.generate_password_hash(request.args.get("password"))
-    gender = request.args.get("gender")
-    phone = request.args.get("phone")
-    city = request.args.get("city")
-    address = request.args.get("address")
-    picture = request.args.get("picture")
+    customer_id = request.args.get("customer_id")
+    payment_id = request.args.get("payment_id")
+    point_sale_id = request.args.get("point_sale_id")
+    product_id = request.args.get("product_id")
+    quantity = request.args.get("quantity")
+    paid = request.args.get("paid")
+    payment_date = request.args.get("payment_date")
 
-    if first_name is None:
+    if payment_id is None:
         errors = {
             "fields" : "Some fields are empty."
         }
 
-    
     if errors is None:
-        customer = Customer(first_name,last_name,email,password,"gender", 25,phone,"city",address,picture,"credit_card" ,"credit_card_type" ,"billin_address" ,"billing_city" ,"billing_region" ,"billing_postal_code" , "remember_token", "active_token",1, 1, 0,'created_at','updated_at')
-        db.session.add(customer)
+        customerSales = CustomerSales(customer_id,payment_id,point_sale_id,product_id,10,1,"2020/05/05","2020/05/05")
+        db.session.add(customerSales)
         db.session.commit()
-
-        data = Customer.query.filter_by(email=email).first()
-        
-        user = { "id" : data.customer_id,
-                     "first_name" : data.first_name,
-                     "last_name" : data.last_name,
-                     "email" : data.email,
-                     "gender" : data.gender,
-                     "phone" : data.phone,
-                     "city" : data.city,
-                     "address" : data.address,
-                     "picture" : data.picture,
-                     "online" : data.online,
-                     "black_list" : data.black_list,
-                     "trash" : data.trash,
-                     "created_at" : data.created_at,
-                     "updated_at" : data.updated_at
-                    }
-        token = jwt.encode({'user':user,'exp':datetime.datetime.utcnow()+datetime.timedelta(minutes=1)},app.secret_key)
         ret = {
-            'access_token': token.decode('UTF-8'),
-            'user':  user,
-            'success':  'Employee add successfully.'
+            'success':  'customer Sales add successfully.'
         }
         return jsonify(ret), 200
     return jsonify({'errors' : errors})
+
+
+# get all customers & protected by access token
+@app.route('/all_sales/<customer_id>', methods=('GET','POST'))
+def all_sales(customer_id):
+    data = []
+    for x in CustomerSales.query.filter_by(customer_id=customer_id):
+        elemenet = { "customer_id" : x.customer_id,
+                     "payment_id" : x.payment_id,
+                     "point_sale_id" : x.point_sale_id,
+                     "product_id" : x.product_id,
+                     "quantity" : x.quantity,
+                     "paid" : x.paid,
+                     "payment_date" : x.payment_date
+                    }
+        data.append(elemenet)
+    return jsonify({ 'data' : data })
 
 # Route /signup api
 @app.route('/signup', methods=["POST"])
