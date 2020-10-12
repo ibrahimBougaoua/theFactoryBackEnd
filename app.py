@@ -95,14 +95,30 @@ def signup_jwt():
     db.session.add(employee)
     db.session.commit()
 
+    data = Employee.query.filter_by(email=email).first()
+
     #if not first_name or not last_name:
     #    return make_response('Could not verify',401,{'WWW-Authenticate':'Basic releam="Login required"'})
 
     if errors is None:
-        token = jwt.encode({'username':"ibrahim",'exp':datetime.datetime.utcnow()+datetime.timedelta(minutes=30)},app.secret_key)
+        user = { "id" : data.employee_id,
+                     "first_name" : data.first_name,
+                     "last_name" : data.last_name,
+                     "email" : data.email,
+                     "gender" : data.gender,
+                     "phone" : data.phone,
+                     "city" : data.city,
+                     "address" : data.address,
+                     "picture" : data.picture,
+                     "enable" : data.enable,
+                     "trash" : data.trash,
+                     "created_at" : data.created_at,
+                     "updated_at" : data.updated_at
+                    }
+        token = jwt.encode({'user':user,'exp':datetime.datetime.utcnow()+datetime.timedelta(minutes=1)},app.secret_key)
         ret = {
             'access_token': token.decode('UTF-8'),
-            'user':  'user data',
+            'user':  user,
             'success':  success
         }
         return jsonify(ret), 200
@@ -118,11 +134,7 @@ def login_jwt():
     data = Employee.query.filter_by(email=email,password=password).first()
 
     if data is not None :
-
-        token = jwt.encode({'username':"ibrahim",'exp':datetime.datetime.utcnow()+datetime.timedelta(minutes=30)},app.secret_key)
-        ret = {
-            'token': token.decode('UTF-8'),
-            'user':  { "id" : data.employee_id,
+        user = { "id" : data.employee_id,
                      "first_name" : data.first_name,
                      "last_name" : data.last_name,
                      "email" : data.email,
@@ -136,18 +148,23 @@ def login_jwt():
                      "created_at" : data.created_at,
                      "updated_at" : data.updated_at
                     }
+
+        token = jwt.encode({'user':user,'exp':datetime.datetime.utcnow()+datetime.timedelta(minutes=1)},app.secret_key)
+        ret = {
+            'token': token.decode('UTF-8'),
+            'user':  user
         }
         return jsonify(ret), 200
     return jsonify({'message' : 'Unauthorize.'})
 
-# token_required
-def token_required(f):
+# access_token_required
+def access_token_required(f):
     @wraps(f)
     def decorated(*args,**kwargs):
         token = None
 
-        if 'x-access-token' in request.headers:
-            token = request.headers['x-access-token']
+        if 'access_token' in request.headers:
+            token = request.headers['access_token']
 
         if not token:
             return jsonify({'message':'token is missing'}), 401
@@ -166,14 +183,16 @@ def unprotected():
     return jsonify({'message':'show enable'})
 
 @app.route('/protected', methods=('GET','POST'))
-@token_required
+@access_token_required
 def protected(user):
     print(user)
     return jsonify({'message':user})
 
+# get all emploies & protected by access token
 @app.route('/all_employee', methods=('GET','POST'))
-@token_required
-def all():
+@access_token_required
+def all(user):
+    print(user)
     data = []
     for x in Employee.query.all():
         elemenet = { "id" : x.employee_id,
@@ -192,5 +211,6 @@ def all():
                     }
         data.append(elemenet)
     return jsonify({ 'data' : data })
+
 if __name__ == '__main__':
     app.run(port=5000,debug=True)
