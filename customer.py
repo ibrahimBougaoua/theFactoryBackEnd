@@ -44,7 +44,6 @@ class Customer(db.Model):
     billing_city = db.Column(db.String(100))
     billing_region = db.Column(db.String(100))
     billing_postal_code = db.Column(db.String(100))
-    billing_city = db.Column(db.String(100))
     remember_token = db.Column(db.String(100))
     active_token = db.Column(db.String(100))
     online = db.Column(db.Boolean)
@@ -53,8 +52,7 @@ class Customer(db.Model):
     created_at = db.Column(db.TIMESTAMP)
     updated_at = db.Column(db.TIMESTAMP)
 
-    def __init__(self, first_name, last_name, email, password, gender, age, phone, city, address, picture, credit_card ,credit_card_type ,billin_address ,billing_city ,billing_region ,billing_postal_code ,billing_city, remember_token, active_token,online, black_list, trash, created_at, updated_at):
-        self.manage_id = manage_id
+    def __init__(self, first_name, last_name, email, password, gender, age, phone, city, address, picture, credit_card ,credit_card_type ,billin_address ,billing_city ,billing_region ,billing_postal_code, remember_token, active_token,online, black_list, trash, created_at, updated_at):
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
@@ -71,7 +69,6 @@ class Customer(db.Model):
         self.billing_city = billing_city
         self.billing_region = billing_region
         self.billing_postal_code = billing_postal_code
-        self.billing_city = billing_city
         self.remember_token = remember_token
         self.active_token = active_token
         self.online = online
@@ -98,7 +95,6 @@ def signup_jwt():
     city = request.args.get("city")
     address = request.args.get("address")
     picture = request.args.get("picture")
-    manage_id = request.args.get("manage_id")
 
     if first_name is None:
         errors = {
@@ -108,31 +104,25 @@ def signup_jwt():
     data = None
     
     # check if email allready exists.
-    data = Employee.query.filter_by(email=email).first()
+    data = Customer.query.filter_by(email=email).first()
     if data is not None:
         if data.email == email:
             return jsonify({'email' : 'email allready exists.'})
     
     # check if phone allready exists.
-    data = Employee.query.filter_by(phone=phone).first()
+    data = Customer.query.filter_by(phone=phone).first()
     if data is not None:
         if data.phone == phone:
             return jsonify({'phone' : 'phone allready exists.'})
 
-    # check if the manager is exist.
-    data = Employee.query.filter_by(employee_id=manage_id).first()
-    if data is None:
-            return jsonify({'manager' : 'not exist.'})
-
     if errors is None:
-
-        employee = Employee(manage_id,first_name,last_name,email,password,"gender",phone,"city",address,picture,  ,'remember_token',0,'created_at','updated_at')
-        db.session.add(employee)
+        customer = Customer(first_name,last_name,email,password,"gender", 25,phone,"city",address,picture,"credit_card" ,"credit_card_type" ,"billin_address" ,"billing_city" ,"billing_region" ,"billing_postal_code" , "remember_token", "active_token",1, 1, 0,'created_at','updated_at')
+        db.session.add(customer)
         db.session.commit()
 
-        data = Employee.query.filter_by(email=email).first()
+        data = Customer.query.filter_by(email=email).first()
         
-        user = { "id" : data.employee_id,
+        user = { "id" : data.customer_id,
                      "first_name" : data.first_name,
                      "last_name" : data.last_name,
                      "email" : data.email,
@@ -141,7 +131,8 @@ def signup_jwt():
                      "city" : data.city,
                      "address" : data.address,
                      "picture" : data.picture,
-                     "enable" : data.enable,
+                     "online" : data.online,
+                     "black_list" : data.black_list,
                      "trash" : data.trash,
                      "created_at" : data.created_at,
                      "updated_at" : data.updated_at
@@ -162,10 +153,10 @@ def login_jwt():
     email = request.args.get("email")
     password = request.args.get("password")
 
-    data = Employee.query.filter_by(email=email,password=password).first()
+    data = Customer.query.filter_by(email=email,password=password).first()
 
     if data is not None :
-        user = { "id" : data.employee_id,
+        user = { "id" : data.customer_id,
                      "first_name" : data.first_name,
                      "last_name" : data.last_name,
                      "email" : data.email,
@@ -174,7 +165,8 @@ def login_jwt():
                      "city" : data.city,
                      "address" : data.address,
                      "picture" : data.picture,
-                     "enable" : data.enable,
+                     "online" : data.online,
+                     "black_list" : data.black_list,
                      "trash" : data.trash,
                      "created_at" : data.created_at,
                      "updated_at" : data.updated_at
@@ -219,14 +211,14 @@ def protected(user):
     print(user)
     return jsonify({'message':user})
 
-# get all emploies & protected by access token
-@app.route('/all_employee', methods=('GET','POST'))
+# get all customers & protected by access token
+@app.route('/all_customers', methods=('GET','POST'))
 @access_token_required
 def all(user):
     print(user)
     data = []
-    for x in Employee.query.all():
-        elemenet = { "id" : x.employee_id,
+    for x in Customer.query.all():
+        elemenet = { "id" : x.customer_id,
                      "first_name" : x.first_name,
                      "last_name" : x.last_name,
                      "email" : x.email,
@@ -235,7 +227,8 @@ def all(user):
                      "city" : x.city,
                      "address" : x.address,
                      "picture" : x.picture,
-                     "enable" : x.enable,
+                     "online" : x.online,
+                     "black_list" : x.black_list,
                      "trash" : x.trash,
                      "created_at" : x.created_at,
                      "updated_at" : x.updated_at
@@ -246,8 +239,8 @@ def all(user):
 # delete employee by id & protected by access token
 @app.route('/employee/<id>', methods=['POST'])
 def delete(id):
-    Employee.query.filter_by(employee_id=6).delete()
-    return jsonify({ 'message' : 'delete employee successfully !' })
+    Customer.query.filter_by(customer_id=6).delete()
+    return jsonify({ 'message' : 'delete customer successfully !' })
 
 if __name__ == '__main__':
     app.run(port=5001,debug=True)
