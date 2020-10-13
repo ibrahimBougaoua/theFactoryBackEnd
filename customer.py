@@ -441,10 +441,14 @@ def update(id):
 
 # delete customer by id & protected by access token
 @app.route('/customer/delete/<id>', methods=['DELETE'])
-def delete(id):
-    Customer.query.filter_by(customer_id=1).delete()
-    db.session.commit()
-    return jsonify({ 'message' : 'delete customer successfully !' })
+def deleteCustomerById(id): 
+    if request.method == 'DELETE':
+        customer = Customer.query.get(id)
+        if customer is not None:
+            Customer.query.filter_by(customer_id=id).delete()
+            db.session.commit()
+            return jsonify({'data' : {  'success' : 'delete customer successfully.' } })
+        return jsonify({'data' : {  'errors' : 'customer not found.' } })
 
 if __name__ == '__main__':
     app.run(port=5001,debug=True)
