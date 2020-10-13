@@ -136,6 +136,7 @@ def customerSales():
 @app.route('/all_sales/<customer_id>', methods=('GET','POST'))
 def all_sales(customer_id):
     data = []
+    print(CustomerSales.query.all())
     for x in CustomerSales.query.filter_by(customer_id=customer_id):
         elemenet = { "customer_id" : x.customer_id,
                      "payment_id" : x.payment_id,
@@ -307,10 +308,11 @@ def all(user):
         data.append(elemenet)
     return jsonify({ 'data' : data })
 
-# delete employee by id & protected by access token
-@app.route('/employee/<id>', methods=['POST'])
+# delete customer by id & protected by access token
+@app.route('/customer/<id>', methods=['DELETE'])
 def delete(id):
-    Customer.query.filter_by(customer_id=6).delete()
+    Customer.query.filter_by(customer_id=1).delete()
+    db.session.commit()
     return jsonify({ 'message' : 'delete customer successfully !' })
 
 if __name__ == '__main__':
