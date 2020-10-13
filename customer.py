@@ -330,7 +330,10 @@ def update(id):
 
             last_name = request.args.get("last_name")
             if last_name:
-                customer.last_name = last_name
+                if len(last_name) > 4:
+                    customer.last_name = last_name
+                else:
+                    errors["last_name"] = "last name most be > 4 caracter."
             else:
                 errors["last_name"] = "last name is empty."
 
@@ -342,7 +345,10 @@ def update(id):
 
             password = request.args.get("password")
             if password:
-                customer.password = password
+                if len(password) > 7:
+                    customer.password = password
+                else:
+                    errors["password"] = "password most be >= 8 caracter."
 
             gender = request.args.get("gender")
             if gender:
@@ -358,7 +364,10 @@ def update(id):
 
             phone = request.args.get("phone")
             if phone:
-                customer.phone = phone
+                if len(phone) == 10:
+                    customer.phone = phone
+                else:
+                    errors["phone"] = "phone most be 10 caracter."
             else:
                 errors["phone"] = "phone is empty."
 
@@ -370,7 +379,10 @@ def update(id):
 
             address = request.args.get("address")
             if address:
-                customer.address = address
+                if len(address) > 5:
+                    customer.address = address
+                else:
+                    errors["address"] = "address most be > 5 caracter."
             else:
                 errors["address"] = "address is empty."
 
@@ -417,15 +429,15 @@ def update(id):
                 errors["billing_postal_code"] = "billing postal code is empty."
 
             if errors:
-                return jsonify({ 'errors' : errors })
+                return jsonify({'data' : { 'errors' : errors } })
             else:
                 db.session.commit()
-                return jsonify({ 'success' : 'customer update successfully.' })
-                
+                return jsonify({'data' : {  'success' : 'customer update successfully.' } })
+
     else:
         errors["customer"] = "customer not found."
     
-    return jsonify({ 'errors' : errors })
+    return jsonify({'data' : {  'errors' : errors } })
 
 # delete customer by id & protected by access token
 @app.route('/customer/delete/<id>', methods=['DELETE'])
