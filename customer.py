@@ -312,75 +312,120 @@ def all(user):
 @app.route('/customer/update/<id>', methods=['PUT'])
 def update(id):
 
+    errors = {}
+
     customer = Customer.query.get(id)
+
+    if customer is not None:
+        if request.method == 'PUT':
+
+            first_name = request.args.get("first_name")
+            if first_name:
+                if len(first_name) > 4:
+                    customer.first_name = first_name
+                else:
+                    errors["first_name"] = "first name most be > 4 caracter."
+            else:
+                errors["first_name"] = "first name is empty."
+
+            last_name = request.args.get("last_name")
+            if last_name:
+                customer.last_name = last_name
+            else:
+                errors["last_name"] = "last name is empty."
+
+            email = request.args.get("email")
+            if email:
+                customer.email = email
+            else:
+                errors["email"] = "email is empty."
+
+            password = request.args.get("password")
+            if password:
+                customer.password = password
+
+            gender = request.args.get("gender")
+            if gender:
+                customer.gender = gender
+            else:
+                errors["gender"] = "gender is empty."
+
+            age = request.args.get("age")
+            if age:
+                customer.age = age
+            else:
+                errors["age"] = "age is empty."
+
+            phone = request.args.get("phone")
+            if phone:
+                customer.phone = phone
+            else:
+                errors["phone"] = "phone is empty."
+
+            city = request.args.get("city")
+            if city:
+                customer.city = city
+            else:
+                errors["city"] = "city is empty."
+
+            address = request.args.get("address")
+            if address:
+                customer.address = address
+            else:
+                errors["address"] = "address is empty."
+
+            picture = request.args.get("picture")
+            if picture:
+                customer.picture = picture
+            else:
+                errors["picture"] = "picture is empty."
+
+            credit_card = request.args.get("credit_card")
+            if credit_card:
+                customer.credit_card = credit_card
+            else:
+                errors["credit_card"] = "credit card is empty."
+
+            credit_card_type = request.args.get("credit_card_type")
+            if credit_card_type:
+                customer.credit_card_type = credit_card_type
+            else:
+                errors["credit_card_type"] = "credit card type is empty."
+
+            billin_address = request.args.get("billin_address")
+            if billin_address:
+                customer.billin_address = billin_address
+            else:
+                errors["billin_address"] = "billin address is empty."
+
+            billing_city = request.args.get("billing_city")
+            if billing_city:
+                customer.billing_city = billing_city
+            else:
+                errors["billing_city"] = "billing city is empty."
+
+            billing_region = request.args.get("billing_region")
+            if billing_region:
+                customer.billing_region = billing_region
+            else:
+                errors["billing_region"] = "billing region is empty."
+
+            billing_postal_code = request.args.get("billing_postal_code")
+            if billing_postal_code:
+                customer.billing_postal_code = billing_postal_code
+            else:
+                errors["billing_postal_code"] = "billing postal code is empty."
+
+            if errors:
+                return jsonify({ 'errors' : errors })
+            else:
+                db.session.commit()
+                return jsonify({ 'success' : 'customer update successfully.' })
+                
+    else:
+        errors["customer"] = "customer not found."
     
-    first_name = request.args.get("first_name")
-    if first_name is not None:
-        customer.first_name = first_name
-
-    last_name = request.args.get("last_name")
-    if last_name is not None:
-        customer.last_name = last_name
-
-    email = request.args.get("email")
-    if email is not None:
-        customer.email = email
-
-    password = request.args.get("password")
-    if password is not None:
-        customer.password = password
-
-    gender = request.args.get("gender")
-    if gender is not None:
-        customer.gender = gender
-
-    age = request.args.get("age")
-    if age is not None:
-        customer.age = age
-
-    phone = request.args.get("phone")
-    if phone is not None:
-        customer.phone = phone
-
-    city = request.args.get("city")
-    if city is not None:
-        customer.city = city
-
-    address = request.args.get("address")
-    if address is not None:
-        customer.address = address
-
-    picture = request.args.get("picture")
-    if picture is not None:
-        customer.picture = picture
-
-    credit_card = request.args.get("credit_card")
-    if credit_card is not None:
-        customer.credit_card = credit_card
-
-    credit_card_type = request.args.get("credit_card_type")
-    if credit_card_type is not None:
-        customer.credit_card_type = credit_card_type
-
-    billin_address = request.args.get("billin_address")
-    if billin_address is not None:
-        customer.billin_address = billin_address
-
-    billing_city = request.args.get("billing_city")
-    if billing_city is not None:
-        customer.billing_city = billing_city
-
-    billing_region = request.args.get("billing_region")
-    if billing_region is not None:
-        customer.billing_region = billing_region
-
-    billing_postal_code = request.args.get("billing_postal_code")
-    if billing_postal_code is not None:
-        customer.billing_postal_code = billing_postal_code
-
-    db.session.commit()
-    
-    return jsonify({ 'message' : 'update customer successfully !' })
+    return jsonify({ 'errors' : errors })
 
 # delete customer by id & protected by access token
 @app.route('/customer/delete/<id>', methods=['DELETE'])
