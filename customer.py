@@ -308,8 +308,82 @@ def all(user):
         data.append(elemenet)
     return jsonify({ 'data' : data })
 
+# update customer by id & protected by access token
+@app.route('/customer/update/<id>', methods=['PUT'])
+def update(id):
+
+    customer = Customer.query.get(id)
+    
+    first_name = request.args.get("first_name")
+    if first_name is not None:
+        customer.first_name = first_name
+
+    last_name = request.args.get("last_name")
+    if last_name is not None:
+        customer.last_name = last_name
+
+    email = request.args.get("email")
+    if email is not None:
+        customer.email = email
+
+    password = request.args.get("password")
+    if password is not None:
+        customer.password = password
+
+    gender = request.args.get("gender")
+    if gender is not None:
+        customer.gender = gender
+
+    age = request.args.get("age")
+    if age is not None:
+        customer.age = age
+
+    phone = request.args.get("phone")
+    if phone is not None:
+        customer.phone = phone
+
+    city = request.args.get("city")
+    if city is not None:
+        customer.city = city
+
+    address = request.args.get("address")
+    if address is not None:
+        customer.address = address
+
+    picture = request.args.get("picture")
+    if picture is not None:
+        customer.picture = picture
+
+    credit_card = request.args.get("credit_card")
+    if credit_card is not None:
+        customer.credit_card = credit_card
+
+    credit_card_type = request.args.get("credit_card_type")
+    if credit_card_type is not None:
+        customer.credit_card_type = credit_card_type
+
+    billin_address = request.args.get("billin_address")
+    if billin_address is not None:
+        customer.billin_address = billin_address
+
+    billing_city = request.args.get("billing_city")
+    if billing_city is not None:
+        customer.billing_city = billing_city
+
+    billing_region = request.args.get("billing_region")
+    if billing_region is not None:
+        customer.billing_region = billing_region
+
+    billing_postal_code = request.args.get("billing_postal_code")
+    if billing_postal_code is not None:
+        customer.billing_postal_code = billing_postal_code
+
+    db.session.commit()
+    
+    return jsonify({ 'message' : 'update customer successfully !' })
+
 # delete customer by id & protected by access token
-@app.route('/customer/<id>', methods=['DELETE'])
+@app.route('/customer/delete/<id>', methods=['DELETE'])
 def delete(id):
     Customer.query.filter_by(customer_id=1).delete()
     db.session.commit()
