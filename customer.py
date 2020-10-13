@@ -286,7 +286,7 @@ def protected(user):
 # get all customers & protected by access token
 @app.route('/all_customers', methods=('GET','POST'))
 @access_token_required
-def all(user):
+def allCustomers(user):
     print(user)
     data = []
     for x in Customer.query.all():
@@ -306,11 +306,11 @@ def all(user):
                      "updated_at" : x.updated_at
                     }
         data.append(elemenet)
-    return jsonify({ 'data' : data })
+    return jsonify({'data' : {  'customers' : data } })
 
 # update customer by id & protected by access token
 @app.route('/customer/update/<id>', methods=['PUT'])
-def update(id):
+def updateCustomerById(id):
 
     errors = {}
 
@@ -449,6 +449,17 @@ def deleteCustomerById(id):
             db.session.commit()
             return jsonify({'data' : {  'success' : 'delete customer successfully.' } })
         return jsonify({'data' : {  'errors' : 'customer not found.' } })
+
+# delete customer by id & protected by access token
+@app.route('/sales/delete/<id>', methods=['DELETE'])
+def deleteCustomerSalesById(id): 
+    if request.method == 'DELETE':
+        customerSales = CustomerSales.query.get(id)
+        if customerSales is not None:
+            CustomerSales.query.filter_by(customer_id=id).delete()
+            db.session.commit()
+            return jsonify({'data' : {  'success' : 'delete customer sales successfully.' } })
+        return jsonify({'data' : {  'errors' : 'customer sales not found.' } })
 
 if __name__ == '__main__':
     app.run(port=5001,debug=True)
