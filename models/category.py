@@ -10,7 +10,7 @@ class Category(db.Model):
     updated_at = db.Column(db.TIMESTAMP)
 
     def __init__(self, name, slug, description, created_at,updated_at):
-        self.name = customer_id
+        self.name = name
         self.slug = slug
         self.description = description
         self.created_at = created_at
