@@ -73,6 +73,47 @@ def customerSales():
 
     return jsonify({'errors' : 'the request not allow !'})
 
+
+
+# update sale by id & protected by access token
+@app.route('/sale/update/<id>', methods=['PUT'])
+def updateCustomerSaleById(id):
+
+    errors = {}
+
+    customerSales = customerSales.query.get(id)
+
+    if customerSales is not None:
+        if request.method == 'PUT':
+
+            quantity = request.args.get("quantity")
+            if quantity:
+                if len(quantity) > 0:
+                    customerSales.quantity = quantity
+                else:
+                    errors["quantity"] = "quantity most be > 0."
+            else:
+                errors["quantity"] = "quantity is empty."
+
+            paid = request.args.get("paid")
+            if paid:
+                customerSales.paid = paid
+
+            payment_date = request.args.get("payment_date")
+            if payment_date:
+                customerSales.payment_date = payment_date
+
+            if errors:
+                return jsonify({'data' : { 'errors' : errors } })
+            else:
+                db.session.commit()
+                return jsonify({'data' : {  'success' : 'customer sale update successfully.' } })
+
+    else:
+        errors["sale"] = "sale not found."
+    
+    return jsonify({'data' : {  'errors' : errors } })
+
 # get all customers & protected by access token
 @app.route('/all_sales/<customer_id>', methods=('GET','POST'))
 def all_sales(customer_id):
