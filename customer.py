@@ -22,33 +22,56 @@ bcrypt = Bcrypt()
 def customerSales():
 
     #errors = {"first_name" : "first name exists"}
-    errors = None
+    errors = {}
     #success = {"created" : "Employee add successfully."}
     success = None
 
-    customer_id = request.args.get("customer_id")
-    payment_id = request.args.get("payment_id")
-    point_sale_id = request.args.get("point_sale_id")
-    product_id = request.args.get("product_id")
-    quantity = request.args.get("quantity")
-    paid = request.args.get("paid")
-    payment_date = request.args.get("payment_date")
+    if request.method == 'POST':
 
-    if payment_id is None:
-        errors = {
-            "fields" : "Some fields are empty."
-        }
+        customer_id = request.args.get("customer_id")
+        if not customer_id:
+            errors["customer_id"] = "customer_id is empty."
 
-    if errors is None:
-        customerSales = CustomerSales(customer_id,payment_id,point_sale_id,product_id,quantity,paid,payment_date,"2020/05/05")
-        db.session.add(customerSales)
-        db.session.commit()
-        ret = {
-            'success':  'customer Sales add successfully.'
-        }
-        return jsonify(ret), 200
-    return jsonify({'errors' : errors})
+        payment_id = request.args.get("payment_id")
+        if not payment_id:
+            errors["payment_id"] = "payment_id is empty."
 
+        point_sale_id = request.args.get("point_sale_id")
+        if not point_sale_id:
+            errors["point_sale_id"] = "point_sale_id is empty."
+
+        product_id = request.args.get("product_id")
+        if not product_id:
+            errors["product_id"] = "product_id is empty."
+
+        quantity = request.args.get("quantity")
+        if not quantity:
+            errors["quantity"] = "quantity is empty."
+
+        paid = request.args.get("paid")
+        if not paid:
+            paid = 1
+
+        payment_date = request.args.get("payment_date")
+
+        if payment_id is None:
+            errors = {
+                "fields" : "Some fields are empty."
+            }
+
+        if errors:
+            return jsonify({'data' : { 'errors' : errors } })
+        else:
+            customerSales = CustomerSales(customer_id,payment_id,point_sale_id,product_id,quantity,int(paid),payment_date,"2020/05/05")
+            db.session.add(customerSales)
+            db.session.commit()
+            ret = {
+                'success':  'customer Sales add successfully.'
+            }
+            return jsonify(ret), 200
+        return jsonify({'errors' : errors})
+
+    return jsonify({'errors' : 'the request not allow !'})
 
 # get all customers & protected by access token
 @app.route('/all_sales/<customer_id>', methods=('GET','POST'))
