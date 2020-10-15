@@ -1,5 +1,6 @@
 from flask import Flask,redirect,session,request,jsonify,json,make_response
-from models.customer import Customer,CustomerSales
+from models.customer import Customer
+from models.customerSales import CustomerSales
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
