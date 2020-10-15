@@ -1,20 +1,6 @@
 from . import db
 
-Textes complets 
-product_id
-name
-desc
-quantity_unit
-unit_price
-size
-color
-note
-trash
-category_id
-created_at
-updated_at
-
-# Customer Model
+# Product Model
 class Product(db.Model):
     product_id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(100))
