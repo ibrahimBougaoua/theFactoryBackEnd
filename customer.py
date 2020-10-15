@@ -18,7 +18,7 @@ CORS(app)
 bcrypt = Bcrypt()
 
 # Route /sales api
-@app.route('/sales', methods=["POST"])
+@app.route('/new/sale', methods=["POST"])
 def customerSales():
 
     #errors = {"first_name" : "first name exists"}
@@ -40,7 +40,7 @@ def customerSales():
         }
 
     if errors is None:
-        customerSales = CustomerSales(customer_id,payment_id,point_sale_id,product_id,10,1,"2020/05/05","2020/05/05")
+        customerSales = CustomerSales(customer_id,payment_id,point_sale_id,product_id,quantity,paid,payment_date,"2020/05/05")
         db.session.add(customerSales)
         db.session.commit()
         ret = {
