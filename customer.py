@@ -1,5 +1,9 @@
 from flask import Flask,redirect,session,request,jsonify,json,make_response
 from models.customer import Customer
+from models.payment import Payment
+from models.pointOfSale import PointOfSale
+from models.category import Category
+from models.product import Product
 from models.customerSales import CustomerSales
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
@@ -11,6 +15,7 @@ import datetime
 from datetime import timedelta
 
 app = Flask(__name__)
+
 app.secret_key = '5df4hg5fg4jh56fg4j564gj564hg56j4g5h64j56hg4j5h45j45h4j'
 CORS(app)
 

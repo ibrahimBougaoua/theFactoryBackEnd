@@ -6,7 +6,7 @@ class Product(db.Model):
     name = db.Column(db.String(100))
     desc = db.Column(db.Text)
     quantity_unit = db.Column(db.Integer)
-    unit_price = db.Column(db.Double)
+    unit_price = db.Column(db.Integer)
     size = db.Column(db.String(50))
     color = db.Column(db.String(50))
     note = db.Column(db.Text)
