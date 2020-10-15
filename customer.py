@@ -8,7 +8,6 @@ from models.product import Product
 from models.customerSales import CustomerSales
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
-from flask_sqlalchemy import SQLAlchemy
 import random
 import jwt
 from functools import wraps
