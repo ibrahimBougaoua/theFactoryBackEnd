@@ -1,4 +1,5 @@
 from flask import Flask,redirect,session,request,jsonify,json,make_response
+from models.__init__ import app,db  
 from models.customer import Customer
 from models.payment import Payment
 from models.pointOfSale import PointOfSale
@@ -14,23 +15,7 @@ from functools import wraps
 import datetime
 from datetime import timedelta
 
-app = Flask(__name__)
-
-app.secret_key = '5df4hg5fg4jh56fg4j564gj564hg56j4g5h64j56hg4j5h45j45h4j'
 CORS(app)
-
-#SqlAlchemy Database Configuration With Mysql
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:''@localhost/factory'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-db = SQLAlchemy(app)
-
-app.config['BASE_URL'] = 'http://127.0.0.1:5000'  # Running on localhost
-app.config['JWT_SECRET_KEY'] = 'super-secret'  # Change this!
-app.config['JWT_TOKEN_LOCATION'] = ['cookies']
-app.config['JWT_COOKIE_CSRF_PROTECT'] = True
-app.config['JWT_CSRF_CHECK_FORM'] = True
-
 bcrypt = Bcrypt()
 
 # Route /sales api
