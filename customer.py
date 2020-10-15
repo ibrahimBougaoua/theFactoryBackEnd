@@ -81,14 +81,14 @@ def updateCustomerSaleById(id):
 
     errors = {}
 
-    customerSales = customerSales.query.get(id)
+    customerSales = CustomerSales.query.get(id)
 
     if customerSales is not None:
         if request.method == 'PUT':
 
             quantity = request.args.get("quantity")
             if quantity:
-                if len(quantity) > 0:
+                if int(quantity) > 0:
                     customerSales.quantity = quantity
                 else:
                     errors["quantity"] = "quantity most be > 0."
@@ -102,6 +102,8 @@ def updateCustomerSaleById(id):
             payment_date = request.args.get("payment_date")
             if payment_date:
                 customerSales.payment_date = payment_date
+
+            db.session.commit()
 
             if errors:
                 return jsonify({'data' : { 'errors' : errors } })
