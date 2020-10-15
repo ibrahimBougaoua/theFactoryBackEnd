@@ -80,10 +80,11 @@ class Customer(db.Model):
 
 # Customer Sales Model
 class CustomerSales(db.Model):
-    customer_id = db.Column(db.Integer, primary_key = True)
-    payment_id = db.Column(db.Integer)
-    point_sale_id = db.Column(db.Integer)
-    product_id = db.Column(db.Integer)
+    id = db.Column(db.Integer, primary_key=True)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customer.customer_id'),nullable=False)
+    payment_id = db.Column(db.Integer)#db.Column(db.Integer, db.ForeignKey('payment.payment_id'),nullable=False)
+    point_sale_id = db.Column(db.Integer)#db.Column(db.Integer, db.ForeignKey('point_of_sale.point_sale_id'),nullable=False)
+    product_id = db.Column(db.Integer)#db.Column(db.Integer, db.ForeignKey('product.product_id'),nullable=False)
     quantity = db.Column(db.Integer)
     paid = db.Column(db.Boolean)
     payment_date = db.Column(db.String)
