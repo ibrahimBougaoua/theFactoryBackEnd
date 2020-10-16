@@ -6,6 +6,10 @@ from models.pointOfSale import PointOfSale
 from models.category import Category
 from models.product import Product
 from models.customerSales import CustomerSales
+from models.factory import Factory
+from models.picture import Picture
+from models.employeePointOfSale import EmployeePointOfSale
+from models.store import Store
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 import random
