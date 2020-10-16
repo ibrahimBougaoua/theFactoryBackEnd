@@ -80,7 +80,9 @@ def updateCustomerSaleById(id):
     errors = {}
 
     customerSales = CustomerSales.query.get(id)
-    print(customerSales)
+    print(customerSales.id)
+    customerSales.quantity = 25
+    db.session.commit()
 
     if customerSales is not None:
         if request.method == 'PUT':
