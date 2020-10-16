@@ -299,5 +299,167 @@ def deleteStoreById(id):
             return jsonify({'data' : {  'success' : 'delete store successfully.' } })
         return jsonify({'data' : {  'errors' : 'store not found.' } })
 
+
+
+
+        self. = 
+        self. = desc
+        self. = quantity_unit
+        self. = unit_price
+        self. = size
+        self. = color
+        self. = note
+        self.trash = trash
+        self.created_at = created_at
+        self.updated_at = updated_at
+
+
+
+# Route /add/product api
+@app.route('/add/product', methods=["POST"])
+def addProduct():
+
+    #errors = {"first_name" : "first name exists"}
+    errors = {}
+    #success = {"created" : "Employee add successfully."}
+    success = None
+
+    if request.method == 'POST':
+
+        name = request.args.get("name")
+        if not name:
+            errors["name"] = "name is empty."
+
+        desc = request.args.get("desc")
+        if not desc:
+            errors["desc"] = "desc is empty."
+
+        quantity_unit = request.args.get("quantity_unit")
+        if quantity_unit:
+            if int(quantity_unit) < 0:
+                errors["quantity_unit"] = "quantity_unit most be > 0."
+        else:
+            errors["quantity_unit"] = "quantity_unit is empty."
+
+        unit_price = request.args.get("unit_price")
+        if unit_price:
+            if int(unit_price) < 0:
+                errors["unit_price"] = "unit_price most be > 0."
+        else:
+            errors["unit_price"] = "unit_price is empty."
+
+        size = request.args.get("size")
+        if not size:
+            errors["size"] = "size is empty."
+
+        color = request.args.get("color")
+        if not color:
+            errors["color"] = "color is empty."
+
+        note = request.args.get("note")
+        if not note:
+            errors["note"] = "note is empty."
+
+        if name is None:
+            errors = {
+                "fields" : "Some fields are empty."
+            }
+
+        if errors:
+            return jsonify({'data' : { 'errors' : errors } })
+        else:
+            product = Product(name, desc, quantity_unit, unit_price, size, color, note)
+            db.session.add(product)
+            db.session.commit()
+            ret = {
+                'success':  'product added successfully.'
+            }
+            return jsonify(ret), 200
+        return jsonify({'errors' : errors})
+
+    return jsonify({'errors' : 'the request not allow !'})
+
+# update product by id & protected by access token
+@app.route('/product/update/<id>', methods=['PUT'])
+def updateStoreById(id):
+
+    errors = {}
+
+    product = Product.query.get(id)
+
+    if product is not None:
+        if request.method == 'PUT':
+
+            name = request.args.get("name")
+            if name:
+                product.name = name
+
+            desc = request.args.get("desc")
+            if desc:
+                product.desc = desc
+
+            quantity_unit = request.args.get("quantity_unit")
+            if quantity_unit:
+                if int(quantity_unit) > 0:
+                    product.quantity_unit = quantity_unit
+                else:
+                    errors["quantity_unit"] = "quantity_unit most be > 0."
+            else:
+                errors["quantity_unit"] = "quantity_unit is empty."
+
+            quantity_unit = request.args.get("quantity_unit")
+            if quantity_unit:
+                if int(quantity_unit) > 0:
+                    product.quantity_unit = quantity_unit
+                else:
+                    errors["quantity_unit"] = "quantity_unit most be > 0."
+            else:
+                errors["quantity_unit"] = "quantity_unit is empty."
+
+            unit_price = request.args.get("unit_price")
+            if unit_price:
+                if int(unit_price) > 0:
+                    store.unit_price = unit_price
+                else:
+                    errors["unit_price"] = "unit_price most be > 0."
+            else:
+                errors["unit_price"] = "unit_price is empty."
+
+
+            size = request.args.get("size")
+            if size:
+                product.size = size
+
+            color = request.args.get("color")
+            if color:
+                product.color = color
+
+            note = request.args.get("note")
+            if note:
+                product.note = note
+
+            if errors:
+                return jsonify({'data' : { 'errors' : errors } })
+            else:
+                db.session.commit()
+                return jsonify({'data' : {  'success' : 'product update successfully.' } })
+
+    else:
+        errors["product"] = "product not found."
+    
+    return jsonify({'data' : {  'errors' : errors } })
+
+
+# delete product by id & protected by access token
+@app.route('/product/delete/<id>', methods=['DELETE'])
+def deleteProductById(id): 
+    if request.method == 'DELETE':
+        product = Product.query.get(id)
+        if product is not None:
+            Product.query.filter_by(id=id).delete()
+            db.session.commit()
+            return jsonify({'data' : {  'success' : 'delete product successfully.' } })
+        return jsonify({'data' : {  'errors' : 'product not found.' } })
+
 if __name__ == '__main__':
     app.run(port=5002,debug=True)
