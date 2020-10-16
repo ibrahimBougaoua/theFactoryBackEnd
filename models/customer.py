@@ -21,9 +21,9 @@ class Customer(db.Model):
     billing_postal_code = db.Column(db.String(100))
     remember_token = db.Column(db.String(100))
     active_token = db.Column(db.String(100))
-    online = db.Column(db.Boolean)
-    black_list = db.Column(db.Boolean)
-    trash = db.Column(db.Boolean)
+    online = db.Column(db.Boolean, default=False, server_default="false")
+    black_list = db.Column(db.Boolean, default=False, server_default="false")
+    trash = db.Column(db.Boolean, default=False, server_default="false")
     created_at = db.Column(db.TIMESTAMP)
     updated_at = db.Column(db.TIMESTAMP)
 
