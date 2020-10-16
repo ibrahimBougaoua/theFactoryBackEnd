@@ -721,5 +721,112 @@ def deletePictureById(id):
             return jsonify({'data' : {  'success' : 'delete pointOfSale successfully.' } })
         return jsonify({'data' : {  'errors' : 'pointOfSale not found.' } })
 
+
+
+# Route /add/factory api
+@app.route('/add/factory', methods=["POST"])
+def addFactory():
+
+    #errors = {"first_name" : "first name exists"}
+    errors = {}
+    #success = {"created" : "Employee add successfully."}
+    success = None
+
+    if request.method == 'POST':
+
+        name = request.args.get("name")
+        if not name:
+            errors["name"] = "name is empty."
+
+        desc = request.args.get("desc")
+        if not desc:
+            errors["desc"] = "desc is empty."
+
+        logo = request.args.get("logo")
+        if not logo:
+            errors["logo"] = "logo is empty."
+
+        phone = request.args.get("phone")
+        if not phone:
+            errors["phone"] = "phone is empty."
+
+        employee_id = request.args.get("employee_id")
+        if not employee_id:
+            errors["employee_id"] = "employee_id is empty."
+
+        if name is None:
+            errors = {
+                "fields" : "Some fields are empty."
+            }
+
+        if errors:
+            return jsonify({'data' : { 'errors' : errors } })
+        else:
+            factory = Factory(name, desc, logo, phone, factory_id)
+            db.session.add(factory)
+            db.session.commit()
+            ret = {
+                'success':  'factory added successfully.'
+            }
+            return jsonify(ret), 200
+        return jsonify({'errors' : errors})
+
+    return jsonify({'errors' : 'the request not allow !'})
+
+# update factory by id & protected by access token
+@app.route('/factory/update/<id>', methods=['PUT'])
+def updateFactoryById(id):
+
+    errors = {}
+
+    factory = Factory.query.get(id)
+
+    if factory is not None:
+        if request.method == 'PUT':
+
+            name = request.args.get("name")
+            if name:
+                factory.name = name
+
+            desc = request.args.get("desc")
+            if desc:
+                factory.desc = desc
+
+            logo = request.args.get("logo")
+            if logo:
+                factory.logo = logo
+                
+            phone = request.args.get("phone")
+            if phone:
+                factory.phone = phone
+
+            employee_id = request.args.get("employee_id")
+            if employee_id:
+                factory.employee_id = employee_id
+
+            if errors:
+                return jsonify({'data' : { 'errors' : errors } })
+            else:
+                db.session.commit()
+                return jsonify({'data' : {  'success' : 'factory update successfully.' } })
+
+    else:
+        errors["factory"] = "factory not found."
+    
+    return jsonify({'data' : {  'errors' : errors } })
+
+
+# delete factory by id & protected by access token
+@app.route('/factory/delete/<id>', methods=['DELETE'])
+def deleteFactoryById(id): 
+    if request.method == 'DELETE':
+        factory = Factory.query.get(id)
+        if factory is not None:
+            Factory.query.filter_by(id=id).delete()
+            db.session.commit()
+            return jsonify({'data' : {  'success' : 'delete factory successfully.' } })
+        return jsonify({'data' : {  'errors' : 'factory not found.' } })
+
+
 if __name__ == '__main__':
     app.run(port=5002,debug=True)
