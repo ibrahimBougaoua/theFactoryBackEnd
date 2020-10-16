@@ -299,22 +299,6 @@ def deleteStoreById(id):
             return jsonify({'data' : {  'success' : 'delete store successfully.' } })
         return jsonify({'data' : {  'errors' : 'store not found.' } })
 
-
-
-
-        self. = 
-        self. = desc
-        self. = quantity_unit
-        self. = unit_price
-        self. = size
-        self. = color
-        self. = note
-        self.trash = trash
-        self.created_at = created_at
-        self.updated_at = updated_at
-
-
-
 # Route /add/product api
 @app.route('/add/product', methods=["POST"])
 def addProduct():
