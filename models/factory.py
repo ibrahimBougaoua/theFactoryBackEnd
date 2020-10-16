@@ -1,6 +1,6 @@
 from . import db
 
-# factory Sales Model
+# factory Model
 class Factory(db.Model):
     factory_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50))
