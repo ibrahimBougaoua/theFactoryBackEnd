@@ -3,6 +3,7 @@ from models.__init__ import app,db
 from models.employee import Employee
 from models.pointOfSale import PointOfSale
 from models.category import Category
+from models.picture import Picture
 from models.product import Product
 from models.store import Store
 from flask_bcrypt import Bcrypt
@@ -344,7 +345,7 @@ def addProduct():
         note = request.args.get("note")
         if not note:
             errors["note"] = "note is empty."
-            
+
         category_id = request.args.get("category_id")
         if not category_id:
             errors["category_id"] = "category_id is empty."
@@ -537,6 +538,96 @@ def deleteCategoryById(id):
             db.session.commit()
             return jsonify({'data' : {  'success' : 'delete category successfully.' } })
         return jsonify({'data' : {  'errors' : 'category not found.' } })
+
+
+
+# Route /add/picture api
+@app.route('/add/picture', methods=["POST"])
+def addPicture():
+
+    #errors = {"first_name" : "first name exists"}
+    errors = {}
+    #success = {"created" : "Employee add successfully."}
+    success = None
+
+    if request.method == 'POST':
+
+        name = request.args.get("name")
+        if not name:
+            errors["name"] = "name is empty."
+
+        size = request.args.get("size")
+        if not size:
+            errors["size"] = "size is empty."
+
+        product_id = request.args.get("product_id")
+        if not product_id:
+            errors["product_id"] = "product_id is empty."
+
+        if name is None:
+            errors = {
+                "fields" : "Some fields are empty."
+            }
+
+        if errors:
+            return jsonify({'data' : { 'errors' : errors } })
+        else:
+            picture = Picture(name, size, product_id)
+            db.session.add(picture)
+            db.session.commit()
+            ret = {
+                'success':  'picture added successfully.'
+            }
+            return jsonify(ret), 200
+        return jsonify({'errors' : errors})
+
+    return jsonify({'errors' : 'the request not allow !'})
+
+# update picture by id & protected by access token
+@app.route('/picture/update/<id>', methods=['PUT'])
+def updatePictureById(id):
+
+    errors = {}
+
+    picture = Picture.query.get(id)
+
+    if picture is not None:
+        if request.method == 'PUT':
+
+            name = request.args.get("name")
+            if name:
+                picture.name = name
+
+            size = request.args.get("size")
+            if size:
+                picture.size = size
+
+            product_id = request.args.get("product_id")
+            if product_id:
+                picture.product_id = product_id
+
+            if errors:
+                return jsonify({'data' : { 'errors' : errors } })
+            else:
+                db.session.commit()
+                return jsonify({'data' : {  'success' : 'picture update successfully.' } })
+
+    else:
+        errors["picture"] = "picture not found."
+    
+    return jsonify({'data' : {  'errors' : errors } })
+
+
+# delete picture by id & protected by access token
+@app.route('/picture/delete/<id>', methods=['DELETE'])
+def deletePictureById(id): 
+    if request.method == 'DELETE':
+        picture = Picture.query.get(id)
+        if picture is not None:
+            Picture.query.filter_by(id=id).delete()
+            db.session.commit()
+            return jsonify({'data' : {  'success' : 'delete picture successfully.' } })
+        return jsonify({'data' : {  'errors' : 'picture not found.' } })
 
 if __name__ == '__main__':
     app.run(port=5002,debug=True)
