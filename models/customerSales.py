@@ -8,7 +8,7 @@ class CustomerSales(db.Model):
     point_sale_id = db.Column(db.Integer, db.ForeignKey('point_of_sale.point_sale_id'),nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey('product.product_id'),nullable=False)
     quantity = db.Column(db.Integer)
-    paid = db.Column(db.Boolean)
+    paid = db.Column(db.Boolean, default=False, server_default="false")
     payment_date = db.Column(db.String)
     created_at = db.Column(db.TIMESTAMP)
 
