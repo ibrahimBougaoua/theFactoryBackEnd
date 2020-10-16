@@ -1,6 +1,8 @@
 from flask import Flask,redirect,session,request,jsonify,json,make_response
 from models.__init__ import app,db  
 from models.employee import Employee
+from models.pointOfSale import PointOfSale
+from models.product import Product
 from models.store import Store
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
@@ -198,7 +200,7 @@ def CreateStore():
     errors = {}
     #success = {"created" : "Employee add successfully."}
     success = None
-    
+
     if request.method == 'POST':
 
         point_sale_id = request.args.get("point_sale_id")
@@ -236,6 +238,17 @@ def CreateStore():
 
     return jsonify({'errors' : 'the request not allow !'})
 
+
+# delete store by id & protected by access token
+@app.route('/store/delete/<id>', methods=['DELETE'])
+def deleteStoreById(id): 
+    if request.method == 'DELETE':
+        store = Store.query.get(id)
+        if store is not None:
+            Store.query.filter_by(id=id).delete()
+            db.session.commit()
+            return jsonify({'data' : {  'success' : 'delete store successfully.' } })
+        return jsonify({'data' : {  'errors' : 'store not found.' } })
 
 if __name__ == '__main__':
     app.run(port=5002,debug=True)
