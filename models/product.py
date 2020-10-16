@@ -15,7 +15,7 @@ class Product(db.Model):
     created_at = db.Column(db.TIMESTAMP)
     updated_at = db.Column(db.TIMESTAMP)
 
-    def __init__(self, name, desc, quantity_unit, unit_price, size, color, note, trash, created_at, updated_at):
+    def __init__(self, name, desc, quantity_unit, unit_price, size, color, note, trash, category_id, created_at, updated_at):
         self.name = name
         self.desc = desc
         self.quantity_unit = quantity_unit
@@ -24,5 +24,6 @@ class Product(db.Model):
         self.color = color
         self.note = note
         self.trash = trash
+        self.category_id = category_id
         self.created_at = created_at
         self.updated_at = updated_at
