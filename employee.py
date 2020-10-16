@@ -6,6 +6,7 @@ from models.category import Category
 from models.picture import Picture
 from models.product import Product
 from models.factory import Factory
+from models.employeePointOfSale import EmployeePointOfSale
 from models.store import Store
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
@@ -795,7 +796,7 @@ def updateFactoryById(id):
             logo = request.args.get("logo")
             if logo:
                 factory.logo = logo
-                
+
             phone = request.args.get("phone")
             if phone:
                 factory.phone = phone
@@ -827,6 +828,96 @@ def deleteFactoryById(id):
             return jsonify({'data' : {  'success' : 'delete factory successfully.' } })
         return jsonify({'data' : {  'errors' : 'factory not found.' } })
 
+
+
+
+# Route /add/employeepointofsale api
+@app.route('/add/employeepointofsale', methods=["POST"])
+def addEmployeePointOfSale():
+
+    #errors = {"first_name" : "first name exists"}
+    errors = {}
+    #success = {"created" : "Employee add successfully."}
+    success = None
+
+    if request.method == 'POST':
+
+        employee_id = request.args.get("employee_id")
+        if not employee_id:
+            errors["employee_id"] = "employee_id is empty."
+
+        point_sale_id = request.args.get("point_sale_id")
+        if not point_sale_id:
+            errors["point_sale_id"] = "point_sale_id is empty."
+
+        date = request.args.get("date")
+        if not date:
+            errors["date"] = "date is empty."
+
+        if name is None:
+            errors = {
+                "fields" : "Some fields are empty."
+            }
+
+        if errors:
+            return jsonify({'data' : { 'errors' : errors } })
+        else:
+            employeePointOfSale = EmployeePointOfSale(employee_id, point_sale_id, date)
+            db.session.add(employeePointOfSale)
+            db.session.commit()
+            ret = {
+                'success':  'employee point of sale added successfully.'
+            }
+            return jsonify(ret), 200
+        return jsonify({'errors' : errors})
+
+    return jsonify({'errors' : 'the request not allow !'})
+
+# update employeepointofsale by id & protected by access token
+@app.route('/employeepointofsale/update/<id>', methods=['PUT'])
+def updateEmployeePointOfSaleById(id):
+
+    errors = {}
+
+    employeePointOfSale = EmployeePointOfSale.query.get(id)
+
+    if employeePointOfSale is not None:
+        if request.method == 'PUT':
+
+            employee_id = request.args.get("employee_id")
+            if employee_id:
+                employeePointOfSale.employee_id = employee_id
+
+            point_sale_id = request.args.get("point_sale_id")
+            if point_sale_id:
+                employeePointOfSale.point_sale_id = point_sale_id
+
+            date = request.args.get("date")
+            if date:
+                employeePointOfSale.date = date
+                
+            if errors:
+                return jsonify({'data' : { 'errors' : errors } })
+            else:
+                db.session.commit()
+                return jsonify({'data' : {  'success' : 'employee point of sale update successfully.' } })
+
+    else:
+        errors["employeePointOfSale"] = "employee point of sale not found."
+    
+    return jsonify({'data' : {  'errors' : errors } })
+
+
+# delete employeepointofsale by id & protected by access token
+@app.route('/employeepointofsale/delete/<id>', methods=['DELETE'])
+def deleteEmployeePointOfSaleById(id): 
+    if request.method == 'DELETE':
+        employeepointofsale = EmployeePointOfSale.query.get(id)
+        if employeepointofsale is not None:
+            EmployeePointOfSale.query.filter_by(id=id).delete()
+            db.session.commit()
+            return jsonify({'data' : {  'success' : 'delete employee point of sale successfully.' } })
+        return jsonify({'data' : {  'errors' : 'employee point of sale not found.' } })
 
 if __name__ == '__main__':
     app.run(port=5002,debug=True)
