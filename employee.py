@@ -2,6 +2,7 @@ from flask import Flask,redirect,session,request,jsonify,json,make_response
 from models.__init__ import app,db  
 from models.employee import Employee
 from models.pointOfSale import PointOfSale
+from models.category import Category
 from models.product import Product
 from models.store import Store
 from flask_bcrypt import Bcrypt
@@ -444,6 +445,94 @@ def deleteProductById(id):
             db.session.commit()
             return jsonify({'data' : {  'success' : 'delete product successfully.' } })
         return jsonify({'data' : {  'errors' : 'product not found.' } })
+
+# Route /add/category api
+@app.route('/add/category', methods=["POST"])
+def addCategory():
+
+    #errors = {"first_name" : "first name exists"}
+    errors = {}
+    #success = {"created" : "Employee add successfully."}
+    success = None
+
+    if request.method == 'POST':
+
+        name = request.args.get("name")
+        if not name:
+            errors["name"] = "name is empty."
+
+        slug = request.args.get("slug")
+        if not slug:
+            errors["slug"] = "slug is empty."
+
+        description = request.args.get("description")
+        if not description:
+            errors["description"] = "description is empty."
+
+        if name is None:
+            errors = {
+                "fields" : "Some fields are empty."
+            }
+
+        if errors:
+            return jsonify({'data' : { 'errors' : errors } })
+        else:
+            category = Category(name, slug, description)
+            db.session.add(category)
+            db.session.commit()
+            ret = {
+                'success':  'category added successfully.'
+            }
+            return jsonify(ret), 200
+        return jsonify({'errors' : errors})
+
+    return jsonify({'errors' : 'the request not allow !'})
+
+# update category by id & protected by access token
+@app.route('/category/update/<id>', methods=['PUT'])
+def updateCategoryById(id):
+
+    errors = {}
+
+    category = Category.query.get(id)
+
+    if category is not None:
+        if request.method == 'PUT':
+
+            name = request.args.get("name")
+            if name:
+                category.name = name
+
+            slug = request.args.get("slug")
+            if slug:
+                category.slug = slug
+
+            description = request.args.get("description")
+            if description:
+                category.description = description
+
+            if errors:
+                return jsonify({'data' : { 'errors' : errors } })
+            else:
+                db.session.commit()
+                return jsonify({'data' : {  'success' : 'category update successfully.' } })
+
+    else:
+        errors["category"] = "category not found."
+    
+    return jsonify({'data' : {  'errors' : errors } })
+
+
+# delete category by id & protected by access token
+@app.route('/category/delete/<id>', methods=['DELETE'])
+def deleteCategoryById(id): 
+    if request.method == 'DELETE':
+        category = Category.query.get(id)
+        if category is not None:
+            Category.query.filter_by(id=id).delete()
+            db.session.commit()
+            return jsonify({'data' : {  'success' : 'delete category successfully.' } })
+        return jsonify({'data' : {  'errors' : 'category not found.' } })
 
 if __name__ == '__main__':
     app.run(port=5002,debug=True)
