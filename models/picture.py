@@ -1,6 +1,6 @@
 from . import db
 
-# picture Sales Model
+# picture product Model
 class Picture(db.Model):
     picture_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50))
