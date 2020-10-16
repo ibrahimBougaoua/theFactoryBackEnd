@@ -5,6 +5,7 @@ from models.pointOfSale import PointOfSale
 from models.category import Category
 from models.picture import Picture
 from models.product import Product
+from models.factory import Factory
 from models.store import Store
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
@@ -628,6 +629,97 @@ def deletePictureById(id):
             db.session.commit()
             return jsonify({'data' : {  'success' : 'delete picture successfully.' } })
         return jsonify({'data' : {  'errors' : 'picture not found.' } })
+
+
+
+
+# Route /add/pointofsale api
+@app.route('/add/pointofsale', methods=["POST"])
+def addPointOfSale():
+
+    #errors = {"first_name" : "first name exists"}
+    errors = {}
+    #success = {"created" : "Employee add successfully."}
+    success = None
+
+    if request.method == 'POST':
+
+        name = request.args.get("name")
+        if not name:
+            errors["name"] = "name is empty."
+
+        address = request.args.get("address")
+        if not address:
+            errors["address"] = "address is empty."
+
+        factory_id = request.args.get("factory_id")
+        if not factory_id:
+            errors["factory_id"] = "factory_id is empty."
+
+        if name is None:
+            errors = {
+                "fields" : "Some fields are empty."
+            }
+
+        if errors:
+            return jsonify({'data' : { 'errors' : errors } })
+        else:
+            pointOfSale = PointOfSale(name, address, factory_id)
+            db.session.add(pointOfSale)
+            db.session.commit()
+            ret = {
+                'success':  'pointOfSale added successfully.'
+            }
+            return jsonify(ret), 200
+        return jsonify({'errors' : errors})
+
+    return jsonify({'errors' : 'the request not allow !'})
+
+# update pointOfSale by id & protected by access token
+@app.route('/pointofsale/update/<id>', methods=['PUT'])
+def updatePointOfSaleById(id):
+
+    errors = {}
+
+    pointOfSale = PointOfSale.query.get(id)
+
+    if pointOfSale is not None:
+        if request.method == 'PUT':
+
+            name = request.args.get("name")
+            if name:
+                pointOfSale.name = name
+
+            address = request.args.get("address")
+            if address:
+                pointOfSale.address = address
+
+            factory_id = request.args.get("factory_id")
+            if factory_id:
+                pointOfSale.factory_id = factory_id
+
+            if errors:
+                return jsonify({'data' : { 'errors' : errors } })
+            else:
+                db.session.commit()
+                return jsonify({'data' : {  'success' : 'pointOfSale update successfully.' } })
+
+    else:
+        errors["pointOfSale"] = "pointOfSale not found."
+    
+    return jsonify({'data' : {  'errors' : errors } })
+
+
+# delete pointOfSale by id & protected by access token
+@app.route('/pointofsale/delete/<id>', methods=['DELETE'])
+def deletePictureById(id): 
+    if request.method == 'DELETE':
+        pointOfSale = PointOfSale.query.get(id)
+        if pointOfSale is not None:
+            PointOfSale.query.filter_by(id=id).delete()
+            db.session.commit()
+            return jsonify({'data' : {  'success' : 'delete pointOfSale successfully.' } })
+        return jsonify({'data' : {  'errors' : 'pointOfSale not found.' } })
 
 if __name__ == '__main__':
     app.run(port=5002,debug=True)
