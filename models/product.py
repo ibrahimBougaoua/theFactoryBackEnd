@@ -10,7 +10,7 @@ class Product(db.Model):
     size = db.Column(db.String(50))
     color = db.Column(db.String(50))
     note = db.Column(db.Text)
-    trash = db.Column(db.Boolean)
+    trash = db.Column(db.Boolean, default=False, server_default="false")
     category_id = db.Column(db.Integer, db.ForeignKey('category.category_id'),nullable=False)
     created_at = db.Column(db.TIMESTAMP)
     updated_at = db.Column(db.TIMESTAMP)
