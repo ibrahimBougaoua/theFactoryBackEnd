@@ -2,7 +2,7 @@ from . import db
 
 # store Model
 class Store(db.Model):
-	id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     point_sale_id = db.Column(db.Integer, db.ForeignKey('point_of_sale.point_sale_id'),nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey('product.product_id'),nullable=False)
     quantity_store = db.Column(db.Integer)
