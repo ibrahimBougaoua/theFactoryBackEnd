@@ -73,8 +73,6 @@ def customerSales():
 
     return jsonify({'errors' : 'the request not allow !'})
 
-
-
 # update sale by id & protected by access token
 @app.route('/sale/update/<id>', methods=['PUT'])
 def updateCustomerSaleById(id):
@@ -82,6 +80,7 @@ def updateCustomerSaleById(id):
     errors = {}
 
     customerSales = CustomerSales.query.get(id)
+    print(customerSales)
 
     if customerSales is not None:
         if request.method == 'PUT':
@@ -102,8 +101,6 @@ def updateCustomerSaleById(id):
             payment_date = request.args.get("payment_date")
             if payment_date:
                 customerSales.payment_date = payment_date
-
-            db.session.commit()
 
             if errors:
                 return jsonify({'data' : { 'errors' : errors } })
