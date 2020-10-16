@@ -344,6 +344,10 @@ def addProduct():
         note = request.args.get("note")
         if not note:
             errors["note"] = "note is empty."
+            
+        category_id = request.args.get("category_id")
+        if not category_id:
+            errors["category_id"] = "category_id is empty."
 
         if name is None:
             errors = {
@@ -353,7 +357,7 @@ def addProduct():
         if errors:
             return jsonify({'data' : { 'errors' : errors } })
         else:
-            product = Product(name, desc, quantity_unit, unit_price, size, color, note)
+            product = Product(name, desc, quantity_unit, unit_price, size, color, note,category_id)
             db.session.add(product)
             db.session.commit()
             ret = {
