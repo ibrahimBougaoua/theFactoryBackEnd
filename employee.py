@@ -9,6 +9,13 @@ from functools import wraps
 import datetime
 from datetime import timedelta
 
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['BASE_URL'] = 'http://127.0.0.1:5002'  # Running on localhost
+app.config['JWT_SECRET_KEY'] = 'f98*-+/h-fg/j-8gf-8j-g*8j*g8j*8*fgh*re8h*re8*8f8h-*f8'  # Change this!
+app.config['JWT_TOKEN_LOCATION'] = ['cookies']
+app.config['JWT_COOKIE_CSRF_PROTECT'] = True
+app.config['JWT_CSRF_CHECK_FORM'] = True
+
 CORS(app)
 bcrypt = Bcrypt()
 
@@ -182,4 +189,4 @@ def delete(id):
     return jsonify({ 'message' : 'delete employee successfully !' })
 
 if __name__ == '__main__':
-    app.run(port=5000,debug=True)
+    app.run(port=5002,debug=True)
