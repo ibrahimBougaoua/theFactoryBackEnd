@@ -2,6 +2,7 @@ from . import db
 
 # employee point of sale Model
 class EmployeePointOfSale(db.Model):
+	id = db.Column(db.Integer, primary_key=True)
     employee_id = db.Column(db.Integer, db.ForeignKey('employee.employee_id'),nullable=False)
     point_sale_id = db.Column(db.Integer, db.ForeignKey('point_of_sale.point_sale_id'),nullable=False)
     date = db.Column(db.TIMESTAMP)
