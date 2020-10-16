@@ -238,6 +238,55 @@ def CreateStore():
 
     return jsonify({'errors' : 'the request not allow !'})
 
+# update store by id & protected by access token
+@app.route('/store/update/<id>', methods=['PUT'])
+def updateStoreById(id):
+
+    errors = {}
+
+    store = Store.query.get(id)
+
+    if store is not None:
+        if request.method == 'PUT':
+
+            point_sale_id = request.args.get("point_sale_id")
+            if point_sale_id:
+                store.point_sale_id = point_sale_id
+
+            product_id = request.args.get("product_id")
+            if product_id:
+                store.product_id = product_id
+
+            quantity_store = request.args.get("quantity_store")
+            if quantity_store:
+                if int(quantity_store) > 0:
+                    store.quantity_store = quantity_store
+                else:
+                    errors["quantity_store"] = "quantity_store most be > 0."
+            else:
+                errors["quantity_store"] = "quantity_store is empty."
+
+            quantity_sold = request.args.get("quantity_sold")
+            if quantity_sold:
+                if int(quantity_sold) > 0:
+                    store.quantity_sold = quantity_sold
+                else:
+                    errors["quantity_sold"] = "quantity_sold most be > 0."
+            else:
+                errors["quantity_sold"] = "quantity_sold is empty."
+
+
+            if errors:
+                return jsonify({'data' : { 'errors' : errors } })
+            else:
+                db.session.commit()
+                return jsonify({'data' : {  'success' : 'store update successfully.' } })
+
+    else:
+        errors["store"] = "store not found."
+    
+    return jsonify({'data' : {  'errors' : errors } })
+
 
 # delete store by id & protected by access token
 @app.route('/store/delete/<id>', methods=['DELETE'])
