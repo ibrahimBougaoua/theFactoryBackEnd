@@ -1,6 +1,7 @@
 from flask import Flask,redirect,session,request,jsonify,json,make_response
 from models.__init__ import app,db  
 from models.employee import Employee
+from models.store import Store
 from flask_bcrypt import Bcrypt
 from flask_cors import CORS
 import random
@@ -186,6 +187,55 @@ def all(user):
 def delete(id):
     Employee.query.filter_by(employee_id=6).delete()
     return jsonify({ 'message' : 'delete employee successfully !' })
+
+
+
+# Route /new/store api
+@app.route('/new/store', methods=["POST"])
+def CreateStore():
+
+    #errors = {"first_name" : "first name exists"}
+    errors = {}
+    #success = {"created" : "Employee add successfully."}
+    success = None
+    
+    if request.method == 'POST':
+
+        point_sale_id = request.args.get("point_sale_id")
+        if not point_sale_id:
+            errors["point_sale_id"] = "point_sale_id is empty."
+
+        product_id = request.args.get("product_id")
+        if not product_id:
+            errors["product_id"] = "product_id is empty."
+
+        quantity_store = request.args.get("quantity_store")
+        if not quantity_store:
+            errors["quantity_store"] = "quantity_store is empty."
+
+        quantity_sold = request.args.get("quantity_sold")
+        if not quantity_sold:
+            errors["quantity_sold"] = "quantity_sold is empty."
+
+        if point_sale_id is None:
+            errors = {
+                "fields" : "Some fields are empty."
+            }
+
+        if errors:
+            return jsonify({'data' : { 'errors' : errors } })
+        else:
+            store = Store(point_sale_id,product_id,quantity_store,quantity_sold)
+            db.session.add(store)
+            db.session.commit()
+            ret = {
+                'success':  'store added successfully.'
+            }
+            return jsonify(ret), 200
+        return jsonify({'errors' : errors})
+
+    return jsonify({'errors' : 'the request not allow !'})
+
 
 if __name__ == '__main__':
     app.run(port=5002,debug=True)
