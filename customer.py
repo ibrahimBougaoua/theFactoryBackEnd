@@ -218,7 +218,7 @@ def login_jwt():
     email = request.args.get("email")
     password = request.args.get("password")
 
-    data = Customer.query.filter_by(email=email,password=password).first()
+    data = Customer.query.filter_by(email=email,password=bcrypt.generate_password_hash(password)).first()
 
     if data is not None :
         user = { "id" : data.customer_id,
