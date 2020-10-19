@@ -373,7 +373,7 @@ def addProduct():
 
 # update product by id & protected by access token
 @app.route('/product/update/<id>', methods=['PUT'])
-def updateStoreById(id):
+def updateProductById(id):
 
     errors = {}
 
