@@ -217,33 +217,43 @@ def login_jwt():
 
     email = request.args.get("email")
     password = request.args.get("password")
+    print(request)
+    print(password)
+    
+    if request.method == 'POST':
+        data = Customer.query.filter_by(email=email).first()
+        pw_hash = bcrypt.generate_password_hash('ddd')
+        print(pw_hash) # returns True
+        print(bcrypt.check_password_hash(pw_hash, 'ddd') ) # returns True
+        print(data)
 
-    data = Customer.query.filter_by(email=email,password=bcrypt.generate_password_hash(password)).first()
+        if data is not None :
+            #if bcrypt.check_password_hash(pw_hash, 'ddd'):
+            user = { "id" : data.customer_id,
+                            "first_name" : data.first_name,
+                            "last_name" : data.last_name,
+                            "email" : data.email,
+                            "gender" : data.gender,
+                            "phone" : data.phone,
+                            "city" : data.city,
+                            "address" : data.address,
+                            "picture" : data.picture,
+                            "online" : data.online,
+                            "black_list" : data.black_list,
+                            "trash" : data.trash,
+                            "created_at" : data.created_at,
+                            "updated_at" : data.updated_at
+                            }
 
-    if data is not None :
-        user = { "id" : data.customer_id,
-                     "first_name" : data.first_name,
-                     "last_name" : data.last_name,
-                     "email" : data.email,
-                     "gender" : data.gender,
-                     "phone" : data.phone,
-                     "city" : data.city,
-                     "address" : data.address,
-                     "picture" : data.picture,
-                     "online" : data.online,
-                     "black_list" : data.black_list,
-                     "trash" : data.trash,
-                     "created_at" : data.created_at,
-                     "updated_at" : data.updated_at
-                    }
-
-        token = jwt.encode({'user':user,'exp':datetime.datetime.utcnow()+datetime.timedelta(minutes=1)},app.secret_key)
-        ret = {
-            'token': token.decode('UTF-8'),
-            'user':  user
-        }
-        return jsonify(ret), 200
-    return jsonify({'message' : 'Unauthorize.'})
+            token = jwt.encode({'user':user,'exp':datetime.datetime.utcnow()+datetime.timedelta(minutes=1)},app.secret_key)
+            ret = {
+                'token': token.decode('UTF-8'),
+                'user':  user
+            }
+            return jsonify(ret), 200
+        else:
+            return jsonify({'message' : 'Unauthorize.'})
+    return jsonify({'errors' : 'the request not allow !'})
 
 # access_token_required
 def access_token_required(f):
