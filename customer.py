@@ -261,8 +261,8 @@ def access_token_required(f):
     def decorated(*args,**kwargs):
         token = None
 
-        if 'access_token' in request.headers:
-            token = request.headers['access_token']
+        if request.args.get("access_token"):
+            token = access_token
 
         if not token:
             return jsonify({'message':'token is missing'}), 401
