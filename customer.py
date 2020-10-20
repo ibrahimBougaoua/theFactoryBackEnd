@@ -245,7 +245,7 @@ def login_jwt():
                             "updated_at" : data.updated_at
                             }
 
-            token = jwt.encode({'user':user,'exp':datetime.datetime.utcnow()+datetime.timedelta(minutes=1)},app.secret_key)
+            token = jwt.encode({'user':user,'exp':datetime.datetime.utcnow()+datetime.timedelta(minutes=10)},app.secret_key)
             ret = {
                 'token': token.decode('UTF-8'),
                 'user':  user
@@ -275,6 +275,12 @@ def access_token_required(f):
         return f(data,*args,**kwargs)
 
     return decorated
+
+@app.route('/me', methods=('GET','POST'))
+@access_token_required
+def me(user):
+    print(user)
+    return jsonify({'message':user})
 
 @app.route('/unprotected', methods=('GET','POST'))
 def unprotected():
