@@ -260,17 +260,17 @@ def access_token_required(f):
     @wraps(f)
     def decorated(*args,**kwargs):
         token = None
-
-        if request.args.get("access_token"):
+        access_token = request.args.get("access_token")
+        if access_token:
             token = access_token
 
         if not token:
-            return jsonify({'message':'token is missing'}), 401
+            return jsonify({'data' : {'message':'token is missing'} }), 401
 
         try:
             data = jwt.decode(token,app.secret_key)
         except :
-            return jsonify({'message':'token is invalid'}), 401
+            return jsonify({'data' : {'message':'token is invalid'} }), 401
 
         return f(data,*args,**kwargs)
 
@@ -279,8 +279,7 @@ def access_token_required(f):
 @app.route('/me', methods=('GET','POST'))
 @access_token_required
 def me(user):
-    print(user)
-    return jsonify({'message':user})
+    return jsonify({'data' : {'user' : user} })
 
 @app.route('/unprotected', methods=('GET','POST'))
 def unprotected():
