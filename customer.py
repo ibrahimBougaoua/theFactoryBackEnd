@@ -215,44 +215,56 @@ def signup_jwt():
 @app.route('/signin', methods=('GET','POST'))
 def login_jwt():
 
+    errors = {}
+
     email = request.args.get("email")
     password = request.args.get("password")
-    print(request)
-    print(password)
     
     if request.method == 'POST':
-        data = Customer.query.filter_by(email=email).first()
-        pw_hash = bcrypt.generate_password_hash('ddd')
-        print(pw_hash) # returns True
-        print(bcrypt.check_password_hash(pw_hash, 'ddd') ) # returns True
-        print(data)
 
-        if data is not None :
-            #if bcrypt.check_password_hash(pw_hash, 'ddd'):
-            user = { "id" : data.customer_id,
-                            "first_name" : data.first_name,
-                            "last_name" : data.last_name,
-                            "email" : data.email,
-                            "gender" : data.gender,
-                            "phone" : data.phone,
-                            "city" : data.city,
-                            "address" : data.address,
-                            "picture" : data.picture,
-                            "online" : data.online,
-                            "black_list" : data.black_list,
-                            "trash" : data.trash,
-                            "created_at" : data.created_at,
-                            "updated_at" : data.updated_at
-                            }
+        if not email:
+            errors["email"] = "email is empty."
+        
+        if not password:
+            errors["password"] = "password is empty."
 
-            token = jwt.encode({'user':user,'exp':datetime.datetime.utcnow()+datetime.timedelta(minutes=10)},app.secret_key)
-            ret = {
-                'token': token.decode('UTF-8'),
-                'user':  user
-            }
-            return jsonify(ret), 200
+        if errors:
+            return jsonify({'data' : {'errors' : errors}})
         else:
-            return jsonify({'message' : 'Unauthorize.'})
+            data = Customer.query.filter_by(email=email).first()
+            pw_hash = bcrypt.generate_password_hash('ddd')
+            print(pw_hash) # returns True
+            print(bcrypt.check_password_hash(pw_hash, 'ddd') ) # returns True
+            print(data)
+
+            if data is not None :
+                #if bcrypt.check_password_hash(pw_hash, 'ddd'):
+                user = { "id" : data.customer_id,
+                                "first_name" : data.first_name,
+                                "last_name" : data.last_name,
+                                "email" : data.email,
+                                "gender" : data.gender,
+                                "phone" : data.phone,
+                                "city" : data.city,
+                                "address" : data.address,
+                                "picture" : data.picture,
+                                "online" : data.online,
+                                "black_list" : data.black_list,
+                                "trash" : data.trash,
+                                "created_at" : data.created_at,
+                                "updated_at" : data.updated_at
+                                }
+
+                token = jwt.encode({'user':user,'exp':datetime.datetime.utcnow()+datetime.timedelta(minutes=10)},app.secret_key)
+                ret = {
+                    'token': token.decode('UTF-8'),
+                    'user':  user
+                }
+                return jsonify(ret), 200
+            else:
+                errors["unauthorized"] = "The email address or password is incorrect."
+                return jsonify({'data' : {'errors' : errors}})
+            
     return jsonify({'errors' : 'the request not allow !'})
 
 # access_token_required
