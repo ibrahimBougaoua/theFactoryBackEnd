@@ -160,6 +160,7 @@ def signup_jwt():
     city = request.args.get("city")
     address = request.args.get("address")
     picture = request.args.get("picture")
+    picture = "bbb"
 
     if first_name is None:
         errors = {
