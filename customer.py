@@ -185,32 +185,8 @@ def signup_jwt():
         customer = Customer(first_name,last_name,email,password,"gender", 25,phone,"city",address,picture,"credit_card" ,"credit_card_type" ,"billin_address" ,"billing_city" ,"billing_region" ,"billing_postal_code" , "remember_token", "active_token",1, 1, 0,'created_at','updated_at')
         db.session.add(customer)
         db.session.commit()
-
-        data = Customer.query.filter_by(email=email).first()
-        
-        user = { "id" : data.customer_id,
-                     "first_name" : data.first_name,
-                     "last_name" : data.last_name,
-                     "email" : data.email,
-                     "gender" : data.gender,
-                     "phone" : data.phone,
-                     "city" : data.city,
-                     "address" : data.address,
-                     "picture" : data.picture,
-                     "online" : data.online,
-                     "black_list" : data.black_list,
-                     "trash" : data.trash,
-                     "created_at" : data.created_at,
-                     "updated_at" : data.updated_at
-                    }
-        token = jwt.encode({'user':user,'exp':datetime.datetime.utcnow()+datetime.timedelta(minutes=1)},app.secret_key)
-        ret = {
-            'access_token': token.decode('UTF-8'),
-            'user':  user,
-            'success':  'Employee add successfully.'
-        }
-        return jsonify(ret), 200
-    return jsonify({'errors' : errors})
+        return jsonify({'data' : {'success':  'Employee add successfully.'}})
+    return jsonify({'data' : {'success' : errors}})
 
 # Route /signin api
 @app.route('/signin', methods=('GET','POST'))
@@ -257,14 +233,13 @@ def login_jwt():
                                 }
 
                 token = jwt.encode({'user':user,'exp':datetime.datetime.utcnow()+datetime.timedelta(minutes=10)},app.secret_key)
-                ret = {
-                    'token': token.decode('UTF-8'),
-                    'user':  user
-                }
+                ret = { 'token': token.decode('UTF-8'),
+                         'user':  user
+                      }
                 return jsonify(ret), 200
             else:
                 errors["unauthorized"] = "The email address or password is incorrect."
-                return jsonify({'data' : {'errors' : errors}})
+                return jsonify({'errors' : errors})
             
     return jsonify({'errors' : 'the request not allow !'})
 
@@ -273,9 +248,9 @@ def access_token_required(f):
     @wraps(f)
     def decorated(*args,**kwargs):
         token = None
-        access_token = request.args.get("access_token")
-        if access_token:
-            token = access_token
+
+        if 'access_token' in request.headers:
+            token = request.headers['access_token']
 
         if not token:
             return jsonify({'data' : {'message':'token is missing'} }), 401
