@@ -194,8 +194,8 @@ def login_jwt():
 
     errors = {}
 
-    email = request.args.get("email")
-    password = request.args.get("password")
+    email = request.form.get("email")
+    password = request.form.get("password")
     
     if request.method == 'POST':
 
