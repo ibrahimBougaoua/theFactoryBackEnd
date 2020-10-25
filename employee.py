@@ -713,7 +713,7 @@ def updatePointOfSaleById(id):
 
 # delete pointOfSale by id & protected by access token
 @app.route('/pointofsale/delete/<id>', methods=['DELETE'])
-def deletePictureById(id): 
+def deletePointOfSaleById(id): 
     if request.method == 'DELETE':
         pointOfSale = PointOfSale.query.get(id)
         if pointOfSale is not None:
@@ -721,8 +721,6 @@ def deletePictureById(id):
             db.session.commit()
             return jsonify({'data' : {  'success' : 'delete pointOfSale successfully.' } })
         return jsonify({'data' : {  'errors' : 'pointOfSale not found.' } })
-
-
 
 # Route /add/factory api
 @app.route('/add/factory', methods=["POST"])
