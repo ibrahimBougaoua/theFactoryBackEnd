@@ -104,8 +104,8 @@ def signup_jwt():
 @app.route('/signin', methods=('GET','POST'))
 def login_jwt():
 
-    email = request.args.get("email")
-    password = request.args.get("password")
+    email = request.form.get("email")
+    password = request.form.get("password")
 
     data = Employee.query.filter_by(email=email,password=password).first()
 
