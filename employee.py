@@ -772,6 +772,23 @@ def addFactory():
 
     return jsonify({'message' : 'the request not allow !'})
 
+# get all factories by userId & protected by access token
+@app.route('/all/factory/<employee_id>', methods=('GET','POST'))
+def allFactoriesById(employee_id):
+    data = []
+    print(Factory.query.all())
+    for x in Factory.query.filter_by(employee_id=employee_id):
+        elemenet = { "factory_id" : x.factory_id,
+                     "name" : x.name,
+                     "desc" : x.desc,
+                     "logo" : x.logo,
+                     "phone" : x.phone,
+                     "created_at" : x.created_at,
+                     "updated_at" : x.updated_at
+                    }
+        data.append(elemenet)
+    return jsonify({ 'data' : data })
+
 # update factory by id & protected by access token
 @app.route('/factory/update/<id>', methods=['PUT'])
 def updateFactoryById(id):
