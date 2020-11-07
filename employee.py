@@ -71,7 +71,7 @@ def signup_jwt():
 
     if errors is None:
 
-        employee = Employee(manage_id,first_name,last_name,email,password,"gender",phone,"city",address,picture,0,'remember_token',0,'created_at','updated_at')
+        employee = Employee(manage_id,first_name,last_name,email,password,"gender",phone,"city",address,'picture',0,'remember_token',0,'created_at','updated_at')
         db.session.add(employee)
         db.session.commit()
 
@@ -733,23 +733,23 @@ def addFactory():
 
     if request.method == 'POST':
 
-        name = request.args.get("name")
+        name = request.form.get("name")
         if not name:
             errors["name"] = "name is empty."
 
-        desc = request.args.get("desc")
+        desc = request.form.get("desc")
         if not desc:
             errors["desc"] = "desc is empty."
 
-        logo = request.args.get("logo")
+        logo = request.form.get("logo")
         if not logo:
             errors["logo"] = "logo is empty."
 
-        phone = request.args.get("phone")
+        phone = request.form.get("phone")
         if not phone:
             errors["phone"] = "phone is empty."
 
-        employee_id = request.args.get("employee_id")
+        employee_id = request.form.get("employee_id")
         if not employee_id:
             errors["employee_id"] = "employee_id is empty."
 
@@ -759,18 +759,18 @@ def addFactory():
             }
 
         if errors:
-            return jsonify({'data' : { 'errors' : errors } })
+            jsonify({'message' : errors})
+
         else:
-            factory = Factory(name, desc, logo, phone, factory_id)
+            factory = Factory(name, desc, logo, phone, employee_id)
             db.session.add(factory)
             db.session.commit()
             ret = {
                 'success':  'factory added successfully.'
             }
             return jsonify(ret), 200
-        return jsonify({'errors' : errors})
 
-    return jsonify({'errors' : 'the request not allow !'})
+    return jsonify({'message' : 'the request not allow !'})
 
 # update factory by id & protected by access token
 @app.route('/factory/update/<id>', methods=['PUT'])
