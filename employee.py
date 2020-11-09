@@ -501,28 +501,28 @@ def updateCategoryById(id):
     if category is not None:
         if request.method == 'PUT':
 
-            name = request.args.get("name")
+            name = request.form.get("name")
             if name:
                 category.name = name
 
-            slug = request.args.get("slug")
+            slug = request.form.get("slug")
             if slug:
                 category.slug = slug
 
-            description = request.args.get("description")
+            description = request.form.get("description")
             if description:
                 category.description = description
 
             if errors:
-                return jsonify({'data' : { 'errors' : errors } })
+                return jsonify({ 'message' : errors })
             else:
                 db.session.commit()
-                return jsonify({'data' : {  'success' : 'category update successfully.' } })
+                return jsonify({'success' : 'category update successfully.'})
 
     else:
         errors["category"] = "category not found."
     
-    return jsonify({'data' : {  'errors' : errors } })
+    return jsonify({'message' : errors })
 
 
 # delete category by id & protected by access token
