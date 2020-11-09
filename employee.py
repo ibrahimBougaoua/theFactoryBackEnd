@@ -464,25 +464,20 @@ def addCategory():
 
     if request.method == 'POST':
 
-        name = request.args.get("name")
+        name = request.form.get("name")
         if not name:
             errors["name"] = "name is empty."
 
-        slug = request.args.get("slug")
+        slug = request.form.get("slug")
         if not slug:
             errors["slug"] = "slug is empty."
 
-        description = request.args.get("description")
+        description = request.form.get("description")
         if not description:
             errors["description"] = "description is empty."
 
-        if name is None:
-            errors = {
-                "fields" : "Some fields are empty."
-            }
-
         if errors:
-            return jsonify({'data' : { 'errors' : errors } })
+            return jsonify({ 'message' : errors })
         else:
             category = Category(name, slug, description)
             db.session.add(category)
@@ -491,9 +486,9 @@ def addCategory():
                 'success':  'category added successfully.'
             }
             return jsonify(ret), 200
-        return jsonify({'errors' : errors})
+        return jsonify({'message' : errors})
 
-    return jsonify({'errors' : 'the request not allow !'})
+    return jsonify({'message' : 'the request not allow !'})
 
 # update category by id & protected by access token
 @app.route('/category/update/<id>', methods=['PUT'])
