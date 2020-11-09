@@ -729,8 +729,8 @@ def deletePointOfSaleById(id):
         if pointOfSale is not None:
             PointOfSale.query.filter_by(id=id).delete()
             db.session.commit()
-            return jsonify({'data' : {  'success' : 'delete pointOfSale successfully.' } })
-        return jsonify({'data' : {  'errors' : 'pointOfSale not found.' } })
+            return jsonify({  'success' : 'delete pointOfSale successfully.' })
+        return jsonify({'message' : 'pointOfSale not found.'})
 
 # Route /add/factory api
 @app.route('/add/factory', methods=["POST"])
