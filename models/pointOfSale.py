@@ -9,9 +9,7 @@ class PointOfSale(db.Model):
     created_at = db.Column(db.TIMESTAMP)
     updated_at = db.Column(db.TIMESTAMP)
 
-    def __init__(self, name, address, factory_id, created_at, updated_at):
+    def __init__(self, name, address, factory_id):
         self.name = name
         self.address = address
         self.factory_id = factory_id
-        self.created_at = created_at
-        self.updated_at = updated_at
