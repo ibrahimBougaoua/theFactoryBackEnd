@@ -682,28 +682,28 @@ def updatePointOfSaleById(id):
     if pointOfSale is not None:
         if request.method == 'PUT':
 
-            name = request.args.get("name")
+            name = request.form.get("name")
             if name:
                 pointOfSale.name = name
 
-            address = request.args.get("address")
+            address = request.form.get("address")
             if address:
                 pointOfSale.address = address
 
-            factory_id = request.args.get("factory_id")
+            factory_id = request.form.get("factory_id")
             if factory_id:
                 pointOfSale.factory_id = factory_id
 
             if errors:
-                return jsonify({'data' : { 'errors' : errors } })
+                return jsonify({ 'message' : errors })
             else:
                 db.session.commit()
-                return jsonify({'data' : {  'success' : 'pointOfSale update successfully.' } })
+                return jsonify({ 'success' : 'pointOfSale update successfully.' })
 
     else:
         errors["pointOfSale"] = "pointOfSale not found."
     
-    return jsonify({'data' : {  'errors' : errors } })
+    return jsonify({'message' : errors })
 
 
 # get all point of sale by factoryId & protected by access token
