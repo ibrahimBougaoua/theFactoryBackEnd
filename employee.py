@@ -711,6 +711,21 @@ def updatePointOfSaleById(id):
     return jsonify({'data' : {  'errors' : errors } })
 
 
+# get all point of sale by factoryId & protected by access token
+@app.route('/all/pointofsale/<factory_id>', methods=('GET','POST'))
+def allPointofSaleById(factory_id):
+    data = []
+    print(PointOfSale.query.all())
+    for x in PointOfSale.query.filter_by(factory_id=factory_id):
+        elemenet = { "point_sale_id " : x.point_sale_id ,
+                     "name" : x.name,
+                     "address" : x.address,
+                     "created_at" : x.created_at,
+                     "updated_at" : x.updated_at
+                    }
+        data.append(elemenet)
+    return jsonify(data)
+
 # delete pointOfSale by id & protected by access token
 @app.route('/pointofsale/delete/<id>', methods=['DELETE'])
 def deletePointOfSaleById(id): 
@@ -838,7 +853,7 @@ def deleteFactoryById(id):
     if request.method == 'DELETE':
         factory = Factory.query.get(id)
         if factory is not None:
-            Factory.query.filter_by(id=id).delete()
+            Factory.query.filter_by(factory_id=id).delete()
             db.session.commit()
             return jsonify({  'success' : 'delete factory successfully.' })
         return jsonify({ 'message' : 'factory not found.' })
