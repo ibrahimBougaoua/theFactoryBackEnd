@@ -773,7 +773,7 @@ def addFactory():
     return jsonify({'message' : 'the request not allow !'})
 
 # get all factories by userId & protected by access token
-@app.route('/all/factory/<employee_id>', methods=('GET','POST'))
+@app.route('/all/factories/<employee_id>', methods=('GET','POST'))
 def allFactoriesById(employee_id):
     data = []
     print(Factory.query.all())
@@ -787,7 +787,7 @@ def allFactoriesById(employee_id):
                      "updated_at" : x.updated_at
                     }
         data.append(elemenet)
-    return jsonify({ 'data' : data })
+    return jsonify(data)
 
 # update factory by id & protected by access token
 @app.route('/factory/update/<id>', methods=['PUT'])
@@ -840,10 +840,8 @@ def deleteFactoryById(id):
         if factory is not None:
             Factory.query.filter_by(id=id).delete()
             db.session.commit()
-            return jsonify({'data' : {  'success' : 'delete factory successfully.' } })
-        return jsonify({'data' : {  'errors' : 'factory not found.' } })
-
-
+            return jsonify({  'success' : 'delete factory successfully.' })
+        return jsonify({ 'message' : 'factory not found.' })
 
 
 # Route /add/employeepointofsale api
