@@ -645,22 +645,17 @@ def addPointOfSale():
 
     if request.method == 'POST':
 
-        name = request.args.get("name")
+        name = request.form.get("name")
         if not name:
             errors["name"] = "name is empty."
 
-        address = request.args.get("address")
+        address = request.form.get("address")
         if not address:
             errors["address"] = "address is empty."
 
-        factory_id = request.args.get("factory_id")
+        factory_id = request.form.get("factory_id")
         if not factory_id:
             errors["factory_id"] = "factory_id is empty."
-
-        if name is None:
-            errors = {
-                "fields" : "Some fields are empty."
-            }
 
         if errors:
             return jsonify({ 'message' : errors })
