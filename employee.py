@@ -663,7 +663,7 @@ def addPointOfSale():
             }
 
         if errors:
-            return jsonify({'data' : { 'errors' : errors } })
+            return jsonify({ 'message' : errors })
         else:
             pointOfSale = PointOfSale(name, address, factory_id)
             db.session.add(pointOfSale)
@@ -672,9 +672,9 @@ def addPointOfSale():
                 'success':  'pointOfSale added successfully.'
             }
             return jsonify(ret), 200
-        return jsonify({'errors' : errors})
+        return jsonify({'message' : errors})
 
-    return jsonify({'errors' : 'the request not allow !'})
+    return jsonify({'message' : 'the request not allow !'})
 
 # update pointOfSale by id & protected by access token
 @app.route('/pointofsale/update/<id>', methods=['PUT'])
